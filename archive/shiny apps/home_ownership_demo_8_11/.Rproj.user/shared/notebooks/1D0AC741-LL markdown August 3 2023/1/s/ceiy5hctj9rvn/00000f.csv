@@ -1,0 +1,106 @@
+"0",""
+"0","la_ll_surv_arrears$units_owned <- factor(la_ll_surv_arrears$units_owned, levels=c(""1-2 units"", ""3-4 units"", ""5-10 units"", ""11-30 units"", ""31-50 units"", ""51-100 units"", ""More than 100 units""))"
+"0",""
+"0","la_ll_surv_arrears %>%"
+"0","  mutate(count = 1) %>%"
+"0","  filter(is.na(total_arrears_cat) == FALSE) %>%"
+"0","  dplyr::group_by(units_owned, total_arrears_cat) %>%"
+"0","  dplyr::summarize(count = sum(count)) %>%"
+"0","  mutate(pct =  100 *count/sum(count)) %>% "
+"0","  ungroup %>%"
+"0","  arrange(units_owned) %>%"
+"0","  pander(caption = ""Total Arrears by LL Size"")"
+"1","
+---------------------------------------------------------
+     units_owned       total_arrears_cat   count    pct  
+--------------------- ------------------- ------- -------
+      1-2 units           $1 - $7,499       24     35.82 
+
+      1-2 units        $7,500 - $19,999     16     23.88 
+
+      1-2 units        $20,000 - $49,999    19     28.36 
+
+      1-2 units        More than $50,000     8     11.94 
+
+      3-4 units           $1 - $7,499       23     31.51 
+
+      3-4 units        $7,500 - $19,999     18     24.66 
+
+      3-4 units        $20,000 - $49,999    19     26.03 
+
+      3-4 units        More than $50,000    13     17.81 
+
+     5-10 units           $1 - $7,499       24     29.27 
+
+     5-10 units        $7,500 - $19,999     28     34.15 
+
+     5-10 units        $20,000 - $49,999    19     23.17 
+
+     5-10 units        More than $50,000    11     13.41 
+
+     11-30 units          $1 - $7,499       13     20.97 
+
+     11-30 units       $7,500 - $19,999     14     22.58 
+
+     11-30 units       $20,000 - $49,999    22     35.48 
+
+     11-30 units       More than $50,000    13     20.97 
+
+     31-50 units          $1 - $7,499        8     28.57 
+
+     31-50 units       $7,500 - $19,999      4     14.29 
+
+     31-50 units       $20,000 - $49,999     9     32.14 
+
+     31-50 units       More than $50,000     7      25   
+
+    51-100 units          $1 - $7,499        4     9.756 
+
+    51-100 units       $7,500 - $19,999      5     12.2  
+
+    51-100 units       $20,000 - $49,999    10     24.39 
+
+    51-100 units       More than $50,000    22     53.66 
+
+ More than 100 units      $1 - $7,499        3     5.455 
+
+ More than 100 units   $7,500 - $19,999      2     3.636 
+
+ More than 100 units   $20,000 - $49,999     9     16.36 
+
+ More than 100 units   More than $50,000    41     74.55 
+---------------------------------------------------------
+
+Table: Total Arrears by LL Size
+
+"
+"0","la_ll_surv_arrears %>%"
+"0","  filter(is.na(total_arrears) == FALSE & total_arrears > 0) %>%"
+"0","  dplyr::group_by(units_owned) %>%"
+"0","  dplyr::summarize(mean_arrears = mean(total_arrears, na.rm = TRUE),"
+"0","                   median_arrears = median(total_arrears, na.rm = TRUE)) %>% "
+"0","  ungroup %>%"
+"0"," # arrange(units_owned) %>%"
+"0","  pander(caption = ""Mean and Median Arrears by LL Size"")"
+"1","
+-----------------------------------------------------
+     units_owned       mean_arrears   median_arrears 
+--------------------- -------------- ----------------
+      1-2 units           22126           12000      
+
+      3-4 units           25965           12000      
+
+     5-10 units           24310           12000      
+
+     11-30 units          32107           20000      
+
+     31-50 units          54932           30000      
+
+    51-100 units          80232           60000      
+
+ More than 100 units      378430          143000     
+-----------------------------------------------------
+
+Table: Mean and Median Arrears by LL Size
+
+"

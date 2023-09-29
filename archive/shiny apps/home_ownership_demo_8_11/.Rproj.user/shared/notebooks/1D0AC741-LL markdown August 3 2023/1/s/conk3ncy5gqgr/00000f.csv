@@ -1,0 +1,27 @@
+"0","la_ll_surv %>%"
+"0","  filter(is.na(arrears_binary) == FALSE) %>%"
+"0","  mutate(count = 1) %>%"
+"0","  dplyr::group_by(arrears_binary, ll_type) %>%"
+"0","  dplyr::summarize(count = sum(count)) %>%"
+"0","  arrange(desc(ll_type)) %>%"
+"0","  pander(caption = ""Arrears by landlord size"")"
+"1","
+----------------------------------
+ arrears_binary   ll_type   count 
+---------------- --------- -------
+       No          small     321  
+
+      Yes          small     152  
+
+       No         medium     124  
+
+      Yes         medium     181  
+
+       No          large     10   
+
+      Yes          large     100  
+----------------------------------
+
+Table: Arrears by landlord size
+
+"

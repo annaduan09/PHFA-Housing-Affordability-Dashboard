@@ -1,0 +1,68 @@
+"0","la_ll_surv_arrears %>%"
+"0","  filter(is.na(arrears_cat) == FALSE) %>%"
+"0","  dplyr::group_by(units_owned, arrears_cat) %>%"
+"0","  dplyr::summarize(count = sum(count)) %>%"
+"0","  mutate(pct =  100 *count/sum(count)) %>% "
+"0","  ungroup %>%"
+"0","  arrange(units_owned) %>%"
+"0","  pander(caption = ""Percent in arrears by LL Size"")"
+"1","
+-----------------------------------------------------
+     units_owned        arrears_cat    count    pct  
+--------------------- --------------- ------- -------
+      1-2 units        Less than 25%    17     25.37 
+
+      1-2 units           25%-49%        8     11.94 
+
+      1-2 units           50%-75%       16     23.88 
+
+      1-2 units        More than 75%    26     38.81 
+
+      3-4 units        Less than 25%    20     27.4  
+
+      3-4 units           25%-49%       36     49.32 
+
+      3-4 units           50%-75%       10     13.7  
+
+      3-4 units        More than 75%     7     9.589 
+
+     5-10 units        Less than 25%    54     65.85 
+
+     5-10 units           25%-49%       18     21.95 
+
+     5-10 units           50%-75%        8     9.756 
+
+     5-10 units        More than 75%     2     2.439 
+
+     11-30 units       Less than 25%    50     80.65 
+
+     11-30 units          25%-49%       10     16.13 
+
+     11-30 units          50%-75%        2     3.226 
+
+     31-50 units       Less than 25%    22     78.57 
+
+     31-50 units          25%-49%        5     17.86 
+
+     31-50 units          50%-75%        1     3.571 
+
+    51-100 units       Less than 25%    34      85   
+
+    51-100 units          25%-49%        4      10   
+
+    51-100 units          50%-75%        1      2.5  
+
+    51-100 units       More than 75%     1      2.5  
+
+ More than 100 units   Less than 25%    41     74.55 
+
+ More than 100 units      25%-49%        9     16.36 
+
+ More than 100 units      50%-75%        4     7.273 
+
+ More than 100 units   More than 75%     1     1.818 
+-----------------------------------------------------
+
+Table: Percent in arrears by LL Size
+
+"

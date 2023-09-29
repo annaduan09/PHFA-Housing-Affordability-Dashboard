@@ -1,0 +1,13 @@
+"0","t <- data.frame(landlord_size = c(""Small"", ""Small"", ""Medium"", ""Medium"", ""Medium"", ""Large"", ""Large""), 
+                units_owned = c(""1-2"", ""3-4"", ""5-10"", ""11-30"", ""31-50"", ""51-100"", ""More than 100""),
+                pct_behind = c(""29%"", ""35%"", ""51%"", ""67%"", ""73%"", ""88%"", ""93%""),
+                median_arrears = c(""$12,000"", ""$12,000"", ""$12,000"", ""$20,000"", ""$30,000"", ""$60,000"", ""$143,000"")) %>%
+  group_by(landlord_size) %>%
+   kable(caption = ""Table 6. Rent arrears by the number of units owned by the landlord"") %>%
+  row_spec(1:2, background = ""lightgray"") %>%  # Apply striped background to first two rows
+  row_spec(6:7, background = ""lightgray"")  %>%
+    kable_styling(bootstrap_options = c(""hover""), full_width = FALSE)
+"
+"2","Error in kable_styling(., bootstrap_options = c(""hover""), full_width = FALSE) : 
+  could not find function ""kable_styling""
+"

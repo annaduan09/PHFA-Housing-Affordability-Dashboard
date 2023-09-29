@@ -1,0 +1,14 @@
+name: home_ownership_demo_8_12
+title:
+username:
+account: annaduan09
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9586104
+bundleId: 7554389
+url: https://annaduan09.shinyapps.io/home_ownership_demo_8_12/
+when: 1691715444.49007
+lastSyncTime: 1691715444.49008
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: server_8.7.R|ui.8.7.R

@@ -1,0 +1,28 @@
+# Define server logic to plot various variables against mpg ----
+server <- function(input, output) {
+  
+  # Compute the formula text ----
+  # This is in a reactive expression since it is shared by the
+  # output$caption and output$mpgPlot functions
+  formulaText <- reactive({
+    paste("units ~", input$variable)
+  })
+  
+  # Return the formula text for printing as a caption ----
+  output$caption <- renderText({
+    formulaText()
+  })
+  
+  # Generate a plot of the requested variable against mpg ----
+  # and only exclude outliers if requested
+  output$safmrPlot <- renderPlot({
+    boxplot(as.formula(formulaText()),
+            data = hcv_tract,
+            outline = input$outliers,
+            col = "magenta", pch = 19)
+  })
+  
+}
+
+# Create Shiny app ----
+shinyApp(ui, server)

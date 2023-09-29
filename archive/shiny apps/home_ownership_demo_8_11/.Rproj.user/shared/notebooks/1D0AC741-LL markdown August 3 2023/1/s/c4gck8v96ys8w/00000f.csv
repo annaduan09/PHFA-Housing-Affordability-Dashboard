@@ -1,0 +1,60 @@
+"0","la_ll_surv <- read_survey(""/Users/annaduan-admin/Box Sync/City of Los Angeles Landlord Survey Rent Arrears_August 1, 2023_14.58.csv"") %>%"
+"0","  dplyr::rename(consent = Q1.1, "
+"0","         units_owned = Q2.1,"
+"0","         years_LL = Q2.2,"
+"0","         min_rent = Q2.3_1,"
+"0","         max_rent = Q2.3_2,"
+"0","         rent_income = Q2.4,"
+"0","         property_types = Q2.5,"
+"0","         housing_programs = Q2.6,"
+"0","         sell_units = Q2.11, "
+"0","         arrears_binary = Q3.1,"
+"0","         arrears_cat = Q3.2,"
+"0","         arrears_pre_covid = Q3.3_1,"
+"0","         arrears_moratorium = Q3.3_2,"
+"0","         arrears_rent_protections = Q3.3_3,"
+"0","         arrears_post_feb2023 = Q3.3_4,"
+"0","         total_arrears = Q3.7_4,"
+"0","         approach_arrears = Q3.8,"
+"0","         repayment_agreement = Q3.9,"
+"0","         covid_impact_cat = Q4.1,"
+"0","         rent_problems = Q4.4,"
+"0","         behind_mortgage = Q4.6,"
+"0","         evictions_since_covid_cat = Q6.2,"
+"0","         plan_evict_after_aug1 = Q6.1,"
+"0","         eviction_regulations_clear = Q6.3,"
+"0","         aware_EDP = Q6.4,"
+"0","         aware_JCO = Q6.5,"
+"0","         evict_policy_in_lease = Q6.6) %>%"
+"0","  mutate(ll_type = ifelse(units_owned %in% c(""1-2 units"", ""3-4 units""), ""small"","
+"0","                          ifelse(units_owned %in% c(""5-10 units"",""11-30 units"", ""31-50 units""), ""medium"","
+"0","                                 ifelse(units_owned %in% c(""51-100 units"", ""More than 100 units""), ""large"", NA)))) %>%"
+"0","    filter(consent == ""I consent to participating in the study"" &"
+"0","           duplicated(ResponseId) == FALSE &"
+"0","             duplicated(IPAddress) == FALSE)"
+"0",""
+"0",""
+"0",""
+"0",""
+"0","la_ll_surv %>%"
+"0","  mutate(count = 1) %>%"
+"0","  filter(is.na(ll_type) == FALSE) %>%"
+"0","  group_by(ll_type) %>%"
+"0","  summarize(landlords = sum(count),"
+"0","            pct = round(100*landlords/1180)) %>%"
+"0","  arrange(desc(landlords)) %>%"
+"0","  pander(caption = ""Landlord size"")"
+"1","
+---------------------------
+ ll_type   landlords   pct 
+--------- ----------- -----
+  small       544      46  
+
+ medium       367      31  
+
+  large       125      11  
+---------------------------
+
+Table: Landlord size
+
+"

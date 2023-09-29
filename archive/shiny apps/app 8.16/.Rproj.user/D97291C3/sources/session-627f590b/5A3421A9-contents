@@ -1,0 +1,84 @@
+library(shiny)
+
+
+safmr_list <- data.frame(safmr_2022 = c(1, 2, 3, 4, 5), avg_rent_limit = c(1133, 1210, 1342, 1639, 2013))
+
+voucher_households <- read.csv("/Users/annaduan/Library/CloudStorage/Box-Box/SAFMR\ Study/DEIDENTIFIED/hcv_tr.csv") %>%
+  dplyr::select(-GEOID, -safmr_2021, -safmr_change) %>%
+  left_join(safmr_list, by = "safmr_2022")
+# rent limit list
+
+health <- read.csv("/Users/annaduan/Library/CloudStorage/Box-Box/SAFMR\ Study/DEIDENTIFIED/Data/Panels/zip_sf.csv") %>%
+  dplyr::select(park_area_pct, poor_p_hlth_2wks_20, poor_m_hlth_2wks_20,
+                no_phys_leisure_20, diabetes_20, heart_disease_20) %>%
+  rename(green_space_pct = park_area_pct,
+         poor_mental_health = poor_m_hlth_2wks_20,
+         poor_physical_health = poor_p_hlth_2wks_20,
+         no_phys_activity = no_phys_leisure_20,
+         diabetes = diabetes_20, 
+         heart_disease = heart_disease_20)
+
+safety <- read.csv("/Users/annaduan/Library/CloudStorage/Box-Box/SAFMR\ Study/DEIDENTIFIED/Data/Panels/zip_sf.csv") %>%
+  dplyr::select(all_crime_20, shooting_20, property_crime_20, drug_crime_20, vacancy_pct_2020) %>%
+  rename(overall_crime = all_crime_20,
+         firearm_injuries = shooting_20,
+         property_crime = property_crime_20,
+         drug_crime = drug_crime_20)
+
+
+# define server logic to summarize and view selected dataset
+server <- function(input, output) {
+  
+  # return requested dataset
+  # by declaring datasetInput as a reactive expression, ensure that:
+  # 1: it's only called when the inputs it depends on changes
+  # 2: the computation and result are shared by all the callers,
+  # i.e. it only executes a single time
+  
+  datasetInput <- reactive({ # a reactive value changes in response to the user's input
+    switch(input$dataset,
+           "voucher households" = voucher_households,
+           "health" = health,
+           "safety" = safety)
+  })
+
+
+# create caption
+# the output$caption is computed based on a reactive expression
+# that returns input$caption. When the user changes the "caption" field:
+#
+# 1: this function is automatically called to recompute the output 
+# 2: new caption is pushd back to the browser for re-display
+
+# note: because the data-oriented reactive expressions below don't depend
+# on input$caption, those expressions are NOT called when input$caption changes
+
+output$caption <- renderText({
+  input$caption
+})
+
+# generate summary of dataset
+# the output$summary depends on the datasetInput reaction expression,
+# so it will be re-executed whenever datasetInput is invalidated,
+# IE whenever the input$dataset changes
+output$summary <- renderPrint({
+  dataset <- datasetInput()
+  summary(dataset)
+})
+
+# show the first n observations
+# output$view depends on both the databaseInput reawctive expression
+# and input$obs, so it will be re-executed whenever input$dataset or input$obs
+# is changed
+output$view <- renderTable({
+  head(datasetInput(), n = input$obs)
+})
+
+}
+
+# create shiny app
+shinyApp(ui, server)
+
+
+
+

@@ -1,0 +1,4 @@
+"0","advertising <- read.csv(file.path(""Week_7"",""advertising_clean.csv""))
+"
+"2","Error in file(file, ""rt"") : cannot open the connection
+"

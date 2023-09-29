@@ -1,0 +1,30 @@
+"0","la_ll_surv_arrears <- la_ll_surv_arrears %>%"
+"0","  dplyr::filter(total_arrears > 0) %>%"
+"0","  mutate(arrears_per_unit = round(total_arrears/arrears_count)) %>%"
+"0","  mutate(income_per_unit = round(income_cont/units_cont))"
+"0",""
+"0","la_ll_surv_arrears %>% "
+"0","  mutate(units_cont = round(units_cont),"
+"0","         ll_type = ifelse(units_cont < 3, ""small_1_2"","
+"0","                                  ifelse(units_cont < 5 & units_cont >= 3, ""small_3_4"", ll_type))) %>%"
+"0","  filter(is.na(arrears_per_unit) == FALSE & arrears_per_unit < 50000) %>%"
+"0","  dplyr::group_by(ll_type) %>%"
+"0","  dplyr::summarize(median_arrears_unit = median(arrears_per_unit, na.rm = TRUE)) %>%"
+"0","  arrange(desc(median_arrears_unit)) %>%"
+"0","  pander(caption = ""Median arrears per unit by landlord size"")"
+"1","
+---------------------------------
+  ll_type    median_arrears_unit 
+----------- ---------------------
+ small_1_2          15619        
+
+ small_3_4          8653         
+
+   large            7841         
+
+  medium            6506         
+---------------------------------
+
+Table: Median arrears per unit by landlord size
+
+"
