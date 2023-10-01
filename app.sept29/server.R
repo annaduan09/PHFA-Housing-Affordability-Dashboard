@@ -12,6 +12,7 @@ library(HatchedPolygons)
 library(tidyverse)
 library(tigris)
 library(mapview)
+library(conflicted)
 
 
 #### Data processing ####  
