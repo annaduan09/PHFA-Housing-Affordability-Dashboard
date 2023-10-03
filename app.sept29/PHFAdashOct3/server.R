@@ -126,11 +126,11 @@ server <- function(input, output, session) {
               position = "bottomright") %>%
     addLabelOnlyMarkers(data = dat.sf(), ~dat.sf()$lon, ~dat.sf()$lat, label =  ~as.character(dat.sf()$county),
                         labelOptions = labelOptions(noHide = T, direction = 'center', textOnly = T, style = list(
-                          "color" = "DarkCyan",
+                          "color" = "DarkGray",
                           "font-family" = "sans-serif",
                           "font-size" = "12px")),
                         group = "txt_labels") %>%
-      groupOptions("txt_labels", zoomLevels = 12:100)
+      groupOptions("txt_labels", zoomLevels = 8:100)
     
   })
   
