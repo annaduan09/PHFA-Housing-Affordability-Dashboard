@@ -16,28 +16,25 @@ library(mapview)
 
 
 #### Data processing ####  
-counties <- counties(state = 42) %>%
-  rename(county = NAME) %>%
-  dplyr::select(county) %>%
-  st_transform("WGS84")
-
-dat <- st_read("phfa_dash_data_9.28.geojson") %>%
-  st_drop_geometry() %>%
-  left_join(counties, by = "county") %>%
-  st_as_sf() %>%
-  st_make_valid() %>%
-  st_transform("WGS84")
+dat <- st_read("PHFA_dash_data_October3.geojson") 
 
 panel.sf <- dat %>%
   dplyr::select(county) %>%
   st_centroid() %>%
+  mutate(
+    lat = st_coordinates(.)[, 2],
+    lon = st_coordinates(.)[, 1]
+  ) %>%
   st_drop_geometry() %>%
   left_join(dat, by = "county") %>%
-  st_as_sf() %>%
-  st_transform("WGS84")
+  st_as_sf()
 
-panel <- panel.sf %>%
-  st_drop_geometry()
+panel <- st_drop_geometry(panel.sf)
+
+
+rural <- hatched.SpatialPolygons(panel.sf %>% dplyr::filter(rural == 1), density = 13, angle = c(45, 135)) %>%
+  st_union() %>%
+  st_as_sf()
 
 
 #### Server ####
@@ -65,13 +62,13 @@ server <- function(input, output, session) {
   
   dat.sf = reactive({
     panel.sf %>%
-      dplyr::select(variable = input$variable, county, geometry) %>%
+      dplyr::select(variable = input$variable, county, geometry, lat, lon) %>%
       st_as_sf()
   })
   
   dat = reactive({
     panel %>%
-      dplyr::select(county, variable = input$variable)
+      dplyr::select(county, variable = input$variable, lat, lon)
   })
   
   
@@ -102,6 +99,12 @@ server <- function(input, output, session) {
     
     
   })
+
+  #### Leaflet ####
+  ##### title #####
+  title_dat <- tags$div(
+    HTML("<strong>Indicators by County (%)</strong><br/>
+        Hover to see individual counties"))
   
   output$leaflet <- renderLeaflet({
     leaflet() %>%
@@ -118,39 +121,17 @@ server <- function(input, output, session) {
                     fillOpacity = 0.5,
                     bringToFront = TRUE)) %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
+      addControl(title_dat, position = "topright") %>%
+    addLegend(pal = mapPalette(), title = "", opacity = 1, values = dat.sf()$variable,
+              position = "bottomright") %>%
+    addLabelOnlyMarkers(data = dat.sf(), ~dat.sf()$lon, ~dat.sf()$lat, label =  ~as.character(dat.sf()$county),
+                        labelOptions = labelOptions(noHide = T, direction = 'center', textOnly = T, style = list(
+                          "color" = "DarkCyan",
+                          "font-family" = "sans-serif",
+                          "font-size" = "12px")),
+                        group = "txt_labels") %>%
       groupOptions("txt_labels", zoomLevels = 12:100)
+    
   })
-  # 
-  # output$leaflet <- renderLeaflet({
-  #   leaflet(dat.sf()) %>%
-  #     addPolygons(fillColor = ~mapPalette()(dat.sf()$variable),
-  #                 color = "white",
-  #                 weight = 1,
-  #                 opacity = 1,
-  #                 dashArray = "3",
-  #                 fillOpacity = 0.8,  # Reduce opacity here
-  #                 highlightOptions = highlightOptions(
-  #                   weight = 1,
-  #                   color = "#666",
-  #                   dashArray = "",
-  #                   fillOpacity = 0.5,
-  #                   bringToFront = TRUE)
-  #                 # label = labs_dat,
-  #                 # labelOptions = labelOptions(
-  #                 #   style = list("font-weight" = "normal", padding = "3px 8px"),
-  #                 #   textsize = "15px",
-  #                 #   direction = "auto")
-  #     ) %>%
-  #     # addLegend(pal = mapPalette(), title = "", opacity = 1, values = dat.sf()$variable,
-  #     #           position = "bottomright") %>%
-  #     # addLabelOnlyMarkers(data = dat.sf(), ~dat.sf()$lon, ~dat.sf()$lat, label =  ~as.character(dat.sf()$county),
-  #     #                     labelOptions = labelOptions(noHide = T, direction = 'center', textOnly = T, style = list(
-  #     #                       "color" = "DarkCyan",
-  #     #                       "font-family" = "sans-serif",
-  #     #                       "font-size" = "12px")),
-  #     #                     group = "txt_labels") %>%
-  #     addProviderTiles(providers$CartoDB.Positron) %>%
-  #     groupOptions("txt_labels", zoomLevels = 12:100)
-  # })
   
 }

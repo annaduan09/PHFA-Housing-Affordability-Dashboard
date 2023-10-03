@@ -66,7 +66,7 @@ dat21 <- get_acs(geography = "county",
          renter_occ_hh_pct = ifelse(total_hhE > 0, round(100*renter_occ_hhE/total_hhE), 0),
          renter_vacant_pct = ifelse(renter_occ_hhE > 0, round(100*vacant_rental_unitsE/renter_occ_hhE), 0),
          med_age_home = 2023-med_year_builtE,
-         internet_hh = ifelse(total_hhE > 0, round(100*internet_hhE/total_hhE), 0),
+         internet_hh_pct = ifelse(total_hhE > 0, round(100*internet_hhE/total_hhE), 0),
          rent_burdened_pct = ifelse(med_gross_rentE*12 > 5000*.3, income_below10kE/(renter_occ_hhE *0.01),
                                     ifelse(med_gross_rentE*12 > 12500*.3, (income_below10kE + income_10k_15kE)/(renter_occ_hhE *0.01),
                                            ifelse(med_gross_rentE*12 > 17500*.3, (income_below10kE + income_10k_15kE + income_15k_20kE)/(renter_occ_hhE *0.01),
@@ -104,7 +104,7 @@ dat21 <- get_acs(geography = "county",
          county = word(NAME, 1)) %>%
   rename(med_gross_rent = med_gross_rentE,
          med_home_value = med_home_valueE) %>%
-  dplyr::select(county, owner_occ_hh_pct, renter_occ_hh_pct, renter_vacant_pct, med_age_home, med_home_value, internet_hh, rent_burdened_pct, mortgage_burdened_pct, med_gross_rent) 
+  dplyr::select(county, owner_occ_hh_pct, renter_occ_hh_pct, renter_vacant_pct, med_age_home, med_home_value, internet_hh_pct, rent_burdened_pct, mortgage_burdened_pct, med_gross_rent) 
 
 new_column_names <- paste0(names(dat21), 2021)
 
@@ -273,37 +273,55 @@ names(dat11) <- new_column_names
 dat <- dat21 %>%
   left_join(dat16, by = c("county2021" = "county2016")) %>%
   left_join(dat11, by = c("county2021" = "county2011")) %>%
-  rename(county = county2021)
+  rename(county = county2021) 
 
 #### CHAS Data 
-chas <- st_read("/Users/annaduan/Library/CloudStorage/Box-Box/PHFA Affordability Study (2022)/PHFA dashboard/data/PACounty_2015-2019.xlsx") %>%
+chas <- st_read("/Users/annaduan/Documents/GitHub/PHFA\ dashboard/data/PACounty_2015-2019.xlsx") %>%
   mutate(Geography = word(Geography, end = 1))
 names(chas) <- c("county", "renter_hh", "afford_avail_units", "housing_balance")
 
 #### Census rural-urban by county 
-rural <- st_read("/Users/annaduan/Library/CloudStorage/Box-Box/PHFA Affordability Study (2022)/PHFA dashboard/data/2020_UA_COUNTY.xlsx") %>% 
-  filter(Field1 == "42") %>%
+rural <- st_read("/Users/annaduan/Documents/GitHub/PHFA\ dashboard/data/2020_UA_COUNTY.xlsx") %>% 
+  dplyr::filter(Field1 == "42") %>%
   mutate(rural = ifelse(as.numeric(Field22)/as.numeric(Field5) > 0.5, 1, 0)) %>%
   dplyr::select(Field4, rural) %>%
   rename(county = Field4)
 
 #### County shapefiles
 counties.sf <- counties(state = "PA") %>%
-  dplyr::select("county" = "NAME")
+  dplyr::select("county" = "NAME") %>%
+  st_transform("WGS84")
 
 #### Write panel #### 
-phfa_dash_dat <- dat %>%
+dat <- dat %>%
   left_join(chas, by = "county") %>%
   left_join(rural, by = "county") %>%
   left_join(counties.sf, by = "county") %>%
   st_as_sf() %>%
   st_make_valid()
   
+### Oct 3 2023
+# counties <- counties(state = 42) %>%
+# rename(county = NAME) %>%
+#   dplyr::select(county) %>%
+#   st_transform("WGS84")
 
-st_write(phfa_dash_dat, "phfa_dash_data_9.28.geojson")
+# dat <- st_read("phfa_dash_data_9.28.geojson") %>%
+#   st_drop_geometry() %>%
+#   left_join(counties, by = "county") %>%
+#   st_as_sf()
+
+panel.sf <- dat %>%
+  dplyr::select(county) %>%
+  st_centroid() %>%
+  st_drop_geometry() %>%
+  left_join(dat, by = "county") %>%
+  st_as_sf()
+
+st_write(panel.sf, "PHFA_dash_data_October3.geojson", driver="GeoJSON")
 
 #### Leaflet test run ####
-dat <- st_read("/Users/annaduan/Library/CloudStorage/Box-Box/PHFA\ dashboard/data\ panels/phfa_dash_data_sept26.geojson") %>%
+dat <- st_read("/Users/annaduan/Documents/GitHub/PHFA\ dashboard/app.sept29/PHFA_dash_data_October3.geojson") %>%
   st_as_sf()
 
 

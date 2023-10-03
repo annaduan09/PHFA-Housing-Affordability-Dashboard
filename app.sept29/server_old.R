@@ -16,34 +16,20 @@ library(mapview)
 
 
 #### Data processing ####  
-counties <- counties(state = 42) %>%
-  rename(county = NAME) %>%
-  dplyr::select(county) %>%
-  st_transform("EPSG:32129")
 
-dat <- st_read("phfa_dash_data_9.28.geojson") %>%
-  st_drop_geometry() %>%
-  left_join(counties, by = "county") %>%
-  st_as_sf() %>%
-  st_make_valid() %>%
-  st_transform("EPSG:32129")
-
-panel.sf <- dat %>%
+panel.sf <- st_read("PHFA_dash_data_October3.geojson") %>%
   dplyr::select(county) %>%
   st_centroid() %>%
   st_drop_geometry() %>%
   left_join(dat, by = "county") %>%
-  st_as_sf() %>%
-  st_transform("EPSG:32129")
+  st_as_sf()
 
-panel <- panel.sf %>%
-  st_drop_geometry()
+panel <- st_drop_geometry(panel.sf)
 
 
-rural <- hatched.SpatialPolygons(dat %>% dplyr::filter(rural == 1), density = 13, angle = c(45, 135)) %>%
+rural <- hatched.SpatialPolygons(panel.sf %>% dplyr::filter(rural == 1), density = 13, angle = c(45, 135)) %>%
   st_union() %>%
-  st_as_sf() %>%
-  st_transform("EPSG:32129")
+  st_as_sf()
 
 #### Leaflet formatting ####  
 ##### palette #####
@@ -64,7 +50,6 @@ title_dat <- tags$div(
 server <- function(input, output, session) {
   
 
-  
   #### reactive palette ####
   mapPalette <- reactive({
     colorNumeric(
@@ -96,7 +81,6 @@ server <- function(input, output, session) {
   
   
 
-  
 #### leaflet ####
 output$leaflet <- renderLeaflet({
   leaflet() %>%

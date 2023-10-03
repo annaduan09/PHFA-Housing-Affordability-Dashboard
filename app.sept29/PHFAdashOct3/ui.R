@@ -19,15 +19,16 @@ ui <- navbarPage(theme = shinytheme("united"),
                                                                                         "Vacant rental units (%)" = "renter_vacant_pct2021",
                                                                                         "Median age of home (years)" = "med_age_home2021",
                                                                                         "Median home value ($)" = "med_age_home2021",
-                                                                                        "Households with internet access (%)" = "internet_hh2021",
+                                                                                        "Households with internet access (%)" = "internet_hh_pct2021",
                                                                                         "Rent burdened households (%)" = "rent_burdened_pct2021",
                                                                                         "Mortgage burdened households (%)" = "mortgage_burdened_pct2021",
                                                                                         "Median gross rent ($)" = "med_gross_rent2021",
                                                                                         "Affordable rent units available" = "afford_avail_units",
                                                                                         "Housing supply" = "housing_balance",
-                                                                                        "Rural" = "rural"), selected = "owner_occ_hh_pct2021"
-                                           )
-                               )
+                                                                                        "Rural" = "rural"), selected = "owner_occ_hh_pct2021"),
+                  actionButton("rural", "Show Rural Counties"),
+                  shiny::p("Use this web app to explore housing trends across Pennsylvania counties."),
+                  )
                   ,
                   mainPanel(
                     tabsetPanel(type = "pills",
