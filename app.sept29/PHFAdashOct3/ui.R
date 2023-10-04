@@ -9,6 +9,7 @@ library(stringr)
 library(jsonlite)
 library(magrittr)
 library(shinythemes)
+library(plotly)
 
 ui <- navbarPage(theme = shinytheme("united"), 
                  title = "PHFA Housing Dashboard",
@@ -39,9 +40,9 @@ ui <- navbarPage(theme = shinytheme("united"),
                                 tabPanel(width = 9, title = h4("Data Mapper"), 
                                          leafletOutput("leaflet", height = "800px", width = "100%")),
                                 tabPanel(width = 9, title = h4("Statewide Comparisons"), 
-                                         plotOutput("plot", height = "800px", width = "1000px"),
+                                         plotlyOutput("plot", height = "1000px", width = "100%"),
                                          h6(textOutput("caption", container = span))),
-                                tabPanel(width = 9, title = h4("Data Viewer and Download"), h3("Summary"), tableOutput("tab")))
+                                tabPanel(width = 9, title = h4("Data Viewer and Download"), h3("Summary"), tableOutput("sum")))
                   )
                 )
 )

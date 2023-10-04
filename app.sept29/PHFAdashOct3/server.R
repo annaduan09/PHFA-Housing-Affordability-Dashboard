@@ -13,6 +13,7 @@ library(HatchedPolygons)
 library(tidyverse)
 library(tigris)
 library(mapview)
+library(plotly)
 
 
 #### Data processing ####  
@@ -51,7 +52,7 @@ server <- function(input, output, session) {
       reverse = FALSE)
   })
  
-  #### reactive dataframe ####
+  ##### reactive dataframe #####
   varInput.sf <- reactive({
     input$variable
   })
@@ -72,8 +73,8 @@ server <- function(input, output, session) {
   })
   
   
-  ##### plot #####
-  output$plot <- renderPlot({
+  #### plot ####
+  output$plot <- renderPlotly({
     v <- input$variable
     df <- dat() %>% as.data.frame()
     df <- df %>%
@@ -98,20 +99,21 @@ server <- function(input, output, session) {
     v <- input$variable
     alias <- variable_aliases[v]
   
-    ggplot(data = df, aes(x = reorder(county, order_id), y = variable, fill = variable)) +
+barp <- ggplot(data = df, aes(x = reorder(county, order_id), y = variable, fill = variable)) +
       geom_bar(color = "transparent", stat = "identity") +
-      geom_text(aes(label=variable), hjust=0, colour = "navy", alpha = 0.6,  position = "dodge") +
-      scale_fill_distiller(palette = "YlGnBu", direction = 1) +
+      scale_fill_distiller(palette = "YlGnBu", direction = 1, name = "") +
       labs(title = "", fill = alias, color = "Rural County", y = alias, x = "Urban Counties                                          Rural Counties") +
       theme_minimal() +
       theme(legend.position = "none",
             text = element_text(size = 16),
             axis.title.y = element_text(face = "bold")) +
       coord_flip() 
+
+return(ggplotly(barp))
     
   })
   
-  #### plot header text ####
+  ##### plot header text #####
   output$plotHeaderText <- renderText({
     variable_aliases <- c(
       "owner_occ_hh_pct2021" = "Homeownership rate (%)",
@@ -132,8 +134,10 @@ server <- function(input, output, session) {
     return(paste(alias, "by Pennsylvania County, 2023", sep = " "))
   })
 
-  ##### summary #####
-  output$tab <- renderTable({
+  #### Data viewer ####
+  output$table <- 
+    
+  output$sum <- renderTable({
     data.frame(quartile_1 = quantile(dat()$variable, probs = 0.25, na.rm = TRUE),
                mean = mean(dat()$variable, na.rm = TRUE),
                median = median(dat()$variable, na.rm = TRUE),
@@ -177,7 +181,7 @@ server <- function(input, output, session) {
     
   })
   
-#### Rural hashing update ####
+##### Rural hashing update #####
 x = reactiveVal(1)
   observeEvent(input$rural,{
     x(x()+1) # increment x by 1
@@ -200,7 +204,7 @@ x = reactiveVal(1)
                       fillOpacity = 0.5,
                       bringToFront = TRUE)) %>%
         addPolylines(
-          color = "orange",
+          color = "white",
           data = rural,
           weight = 1.5,
           layerId  = "rural") 
@@ -211,7 +215,7 @@ x = reactiveVal(1)
   })
   
   
-#### Downloadable csv of selected dataset ####
+#### data download ####
   output$downloadData <- downloadHandler(
     filename = function() {
       paste(input$variable, ".csv", sep = "")
