@@ -36,9 +36,9 @@ ui <- navbarPage(theme = shinytheme("united"),
                   ,
                   mainPanel(
                     tabsetPanel(type = "pills",
-                                tabPanel(width = 9, title = h4("Data Mapper"), h3(textOutput("plotHeaderText")),
+                                tabPanel(width = 9, title = h4("Data Mapper"), 
                                          leafletOutput("leaflet", height = "800px", width = "100%")),
-                                tabPanel(width = 9, title = h4("Statewide Comparisons"), h3(textOutput("plotHeaderText")), 
+                                tabPanel(width = 9, title = h4("Statewide Comparisons"), 
                                          plotOutput("plot", height = "1000px", width = "800px"),
                                          h6(textOutput("caption", container = span))),
                                 tabPanel(width = 9, title = h4("Data Viewer and Download"), h3("Summary"), tableOutput("tab")))

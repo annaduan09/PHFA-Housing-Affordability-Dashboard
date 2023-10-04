@@ -72,7 +72,6 @@ server <- function(input, output, session) {
   })
   
   
-  
   ##### plot #####
   output$plot <- renderPlot({
     v <- input$variable
@@ -188,3 +187,4 @@ server <- function(input, output, session) {
     }
   )
 }
+
