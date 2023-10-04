@@ -226,53 +226,58 @@ return(ggplotly(barp))
                   label = labs_dat()) %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
       addControl(title_dat, position = "topright") %>%
-    addLegend(pal = mapPalette(), title = "", opacity = 1, values = dat.sf()$variable,
+      addLegend(pal = mapPalette(), title = "", opacity = 1, values = dat.sf()$variable,
               position = "bottomright") %>%
-    addLabelOnlyMarkers(data = dat.sf(), ~dat.sf()$lon, ~dat.sf()$lat, label =  ~as.character(dat.sf()$county),
+      addLabelOnlyMarkers(data = dat.sf(), ~dat.sf()$lon, ~dat.sf()$lat, label =  ~str_to_upper(as.character(dat.sf()$county)),
                         labelOptions = labelOptions(noHide = T, direction = 'center', textOnly = T, style = list(
-                          "color" = "DarkGray",
+                          "color" = "gray",
                           "font-family" = "sans-serif",
-                          "font-size" = "12px")),
-                        group = "txt_labels") %>%
-      # addMarkers(data = dat.sf(), ~dat.sf()$lon, ~dat.sf()$lat,  popup = ~(as.character(dat.sf()$variable))) %>%
-      groupOptions("txt_labels", zoomLevels = 8:100)
+                          "font-size" = "10px")),
+                        group = "county names") %>%
+      addPolylines(data = rural,
+        color = "white",
+        weight = 2,
+        opacity = 1,
+        group  = "rural counties") %>%
+      addLayersControl(
+        overlayGroups = c("rural counties", "county names"), 
+        options = layersControlOptions(collapsed = F))%>%
+      groupOptions("county names", zoomLevels = 9:100)
     
   })
-  
-##### Labels ##### 
 
-##### Rural hashing update #####
-x = reactiveVal(1)
-  observeEvent(input$rural,{
-    x(x()+1) # increment x by 1
-    x <- as.numeric(x())
-  })
-  
-  observeEvent(input$rural, {
-    if((x() %% 2) == 0) {
-      leafletProxy("leaflet") %>%
-        addPolygons(data = dat.sf(), fillColor = ~mapPalette()(dat.sf()$variable),
-                    color = "white",
-                    weight = 1,
-                    opacity = 1,
-                    fillOpacity = 0.8,
-                    dashArray = "3",
-                    highlightOptions = highlightOptions(
-                      weight = 1,
-                      color = "#666",
-                      dashArray = "",
-                      fillOpacity = 0.5,
-                      bringToFront = TRUE)) %>%
-        addPolylines(
-          color = "white",
-          data = rural,
-          weight = 1.5,
-          layerId  = "rural") 
-    } else {
-      leafletProxy("leaflet") %>%
-        removeShape(layerId  = "rural")
-    }
-  })
+# ##### Rural hashing update #####
+# x = reactiveVal(1)
+#   observeEvent(input$rural,{
+#     x(x()+1) # increment x by 1
+#     x <- as.numeric(x())
+#   })
+#   
+#   observeEvent(input$rural, {
+#     if((x() %% 2) == 0) {
+#       leafletProxy("leaflet") %>%
+#         addPolygons(data = dat.sf(), fillColor = ~mapPalette()(dat.sf()$variable),
+#                     color = "white",
+#                     weight = 1,
+#                     opacity = 1,
+#                     fillOpacity = 0.8,
+#                     dashArray = "3",
+#                     highlightOptions = highlightOptions(
+#                       weight = 1,
+#                       color = "#666",
+#                       dashArray = "",
+#                       fillOpacity = 0.5,
+#                       bringToFront = TRUE)) %>%
+#         addPolylines(
+#           color = "white",
+#           data = rural,
+#           weight = 1.5,
+#           layerId  = "rural") 
+#     } else {
+#       leafletProxy("leaflet") %>%
+#         removeShape(layerId  = "rural")
+#     }
+#   })
   
   
 #### data download ####
