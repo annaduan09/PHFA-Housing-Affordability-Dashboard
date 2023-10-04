@@ -163,6 +163,35 @@ return(ggplotly(barp))
     HTML("<strong>Indicators by County (%)</strong><br/>
         Hover to see individual counties"))
   
+  ##### labels #####
+  labs_dat <- reactive({
+    
+    variable_aliases <- c(
+      "owner_occ_hh_pct2021" = "Homeownership rate (%)",
+      "renter_occ_hh_pct2021" = "Rentership rate (%)",
+      "renter_vacant_pct2021" = "Vacant rental units (%)",
+      "med_age_home2021" = "Median age of home (years)",
+      "med_age_home2021" = "Median home value ($)",
+      "internet_hh_pct2021" = "Households with internet access (%)",
+      "rent_burdened_pct2021" = "Rent burdened households (%)",
+      "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
+      "med_gross_rent2021" = "Median gross rent ($)",
+      "afford_avail_units" = "Affordable rent units available",
+      "housing_balance" = "Housing supply",
+      "rural" = "Rural"
+    )
+    
+    v <- input$variable
+    alias <- variable_aliases[v]
+    
+    sprintf(
+      "<strong>%s County</strong><br/>
+      <strong>%s</strong>: %.0f<sup></sup><br/>
+      <strong>Statewide Median:</strong> %.0f",
+      dat.sf()$county, alias, dat.sf()$variable, median(dat.sf()$variable)
+    ) %>% lapply(htmltools::HTML)
+  })
+  
   output$leaflet <- renderLeaflet({
     leaflet() %>%
       addPolygons(data = dat.sf(), fillColor = ~mapPalette()(dat.sf()$variable),
@@ -176,7 +205,8 @@ return(ggplotly(barp))
                     color = "#666",
                     dashArray = "",
                     fillOpacity = 0.5,
-                    bringToFront = TRUE)) %>%
+                    bringToFront = TRUE),
+                  label = labs_dat()) %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
       addControl(title_dat, position = "topright") %>%
     addLegend(pal = mapPalette(), title = "", opacity = 1, values = dat.sf()$variable,
@@ -187,10 +217,13 @@ return(ggplotly(barp))
                           "font-family" = "sans-serif",
                           "font-size" = "12px")),
                         group = "txt_labels") %>%
+      # addMarkers(data = dat.sf(), ~dat.sf()$lon, ~dat.sf()$lat,  popup = ~(as.character(dat.sf()$variable))) %>%
       groupOptions("txt_labels", zoomLevels = 8:100)
     
   })
   
+##### Labels ##### 
+
 ##### Rural hashing update #####
 x = reactiveVal(1)
   observeEvent(input$rural,{

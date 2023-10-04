@@ -11,8 +11,18 @@ library(magrittr)
 library(shinythemes)
 library(plotly)
 
-ui <- navbarPage(theme = shinytheme("united"), 
-                 title = "PHFA Housing Dashboard",
+ui <- fluidPage(  tags$style(
+  HTML(
+    "
+      .navbar-header {
+        height: 100px; /* You can adjust the height as needed */
+        line-height: 60px; /* Align text vertically within the header */
+      }
+      "
+  )
+),
+navbarPage(theme = shinytheme("united"), 
+                 title = h1("PHFA Housing Dashboard"),
                 sidebarLayout(
                   sidebarPanel(width = 3,
                                h2("Menu"), 
@@ -37,7 +47,7 @@ ui <- navbarPage(theme = shinytheme("united"),
                   ,
                   mainPanel(
                     tabsetPanel(type = "pills",
-                                tabPanel(width = 9, title = h4("Data Mapper"), 
+                                tabPanel(width = 9, title = h4("Interactive Map"), 
                                          leafletOutput("leaflet", height = "800px", width = "100%")),
                                 tabPanel(width = 9, title = h4("Statewide Comparisons"), 
                                          plotlyOutput("plot", height = "1000px", width = "100%"),
@@ -47,4 +57,4 @@ ui <- navbarPage(theme = shinytheme("united"),
                                          h3("Summary"), tableOutput("sum")))
                   )
                 )
-)
+))
