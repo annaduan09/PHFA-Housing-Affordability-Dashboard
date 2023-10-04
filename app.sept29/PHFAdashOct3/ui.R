@@ -14,6 +14,7 @@ ui <- navbarPage(theme = shinytheme("united"),
                  title = "PHFA Housing Dashboard",
                 sidebarLayout(
                   sidebarPanel(width = 3,
+                               h2("Menu"), 
                                selectInput("variable", "Select a variable", choices = c("Homeownership rate (%)" = "owner_occ_hh_pct2021",
                                                                                         "Rentership rate (%)" = "renter_occ_hh_pct2021",
                                                                                         "Vacant rental units (%)" = "renter_vacant_pct2021",
@@ -28,16 +29,19 @@ ui <- navbarPage(theme = shinytheme("united"),
                                                                                         "Rural" = "rural"), selected = "owner_occ_hh_pct2021"),
                   actionButton("rural", "Show Rural Counties"),
                   shiny::p("Use this web app to explore housing trends across Pennsylvania counties."),
+                  br(),  
+                  downloadButton("downloadData", "Download Data"),  
+                  br(),
                   )
                   ,
                   mainPanel(
                     tabsetPanel(type = "pills",
-                                tabPanel(title = h4("Data Mapper"), h3("Housing characteristics across Pennsylvania"),
+                                tabPanel(width = 9, title = h4("Data Mapper"), h3(textOutput("plotHeaderText")),
                                          leafletOutput("leaflet", height = "800px", width = "100%")),
-                                tabPanel(title = h4("Statewide Comparisons"), h3("Housing Characteristics Across Counties"), 
+                                tabPanel(width = 9, title = h4("Statewide Comparisons"), h3(textOutput("plotHeaderText")), 
                                          plotOutput("plot", height = "1000px", width = "800px"),
                                          h6(textOutput("caption", container = span))),
-                                tabPanel(title = h4("Data Viewer and Download"), h3("Summary"), tableOutput("tab")))
+                                tabPanel(width = 9, title = h4("Data Viewer and Download"), h3("Summary"), tableOutput("tab")))
                   )
                 )
 )

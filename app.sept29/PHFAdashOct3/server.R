@@ -62,13 +62,13 @@ server <- function(input, output, session) {
   
   dat.sf = reactive({
     panel.sf %>%
-      dplyr::select(variable = input$variable, county, geometry, lat, lon) %>%
+      dplyr::select(variable = input$variable, county, geometry, lat, lon, rural) %>%
       st_as_sf()
   })
   
   dat = reactive({
     panel %>%
-      dplyr::select(county, variable = input$variable, lat, lon)
+      dplyr::select(county, variable = input$variable, lat, lon, rural)
   })
   
   
@@ -76,17 +76,61 @@ server <- function(input, output, session) {
   ##### plot #####
   output$plot <- renderPlot({
     v <- input$variable
+    df <- dat() %>% as.data.frame()
+    df <- df %>%
+      mutate(rural_score = ifelse(rural == 1, 100000, 0),
+             order_id = rural_score + variable)
 
-    ggplot(data = dat(), aes(x = county, y = variable, fill = variable)) +
+    variable_aliases <- c(
+      "owner_occ_hh_pct2021" = "Homeownership rate (%)",
+      "renter_occ_hh_pct2021" = "Rentership rate (%)",
+      "renter_vacant_pct2021" = "Vacant rental units (%)",
+      "med_age_home2021" = "Median age of home (years)",
+      "med_age_home2021" = "Median home value ($)",
+      "internet_hh_pct2021" = "Households with internet access (%)",
+      "rent_burdened_pct2021" = "Rent burdened households (%)",
+      "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
+      "med_gross_rent2021" = "Median gross rent ($)",
+      "afford_avail_units" = "Affordable rent units available",
+      "housing_balance" = "Housing supply",
+      "rural" = "Rural"
+    )
+    
+    v <- input$variable
+    alias <- variable_aliases[v]
+  
+    ggplot(data = df, aes(x = reorder(county, order_id), y = variable, fill = variable)) +
       geom_bar(color = "transparent", stat = "identity") +
       geom_text(aes(label=variable), hjust=0, colour = "navy", alpha = 0.6,  position = "dodge") +
       scale_fill_distiller(palette = "YlGnBu", direction = 1) +
-      labs(title = "", fill = v, color = "Rural County") +
+      labs(title = "", fill = alias, color = "Rural County", y = alias, x = "Urban Counties                                          Rural Counties") +
       theme_minimal() +
       theme(legend.position = "none",
             text = element_text(size = 16),
             axis.title.y = element_text(face = "bold")) +
-      coord_flip()
+      coord_flip() 
+    
+  })
+  
+  #### plot header text ####
+  output$plotHeaderText <- renderText({
+    variable_aliases <- c(
+      "owner_occ_hh_pct2021" = "Homeownership rate (%)",
+      "renter_occ_hh_pct2021" = "Rentership rate (%)",
+      "renter_vacant_pct2021" = "Vacant rental units (%)",
+      "med_age_home2021" = "Median age of home (years)",
+      "med_age_home2021" = "Median home value ($)",
+      "internet_hh_pct2021" = "Households with internet access (%)",
+      "rent_burdened_pct2021" = "Rent burdened households (%)",
+      "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
+      "med_gross_rent2021" = "Median gross rent ($)",
+      "afford_avail_units" = "Affordable rent units available",
+      "housing_balance" = "Housing supply",
+      "rural" = "Rural"
+    )
+    v <- input$variable
+    alias <- variable_aliases[v]
+    return(paste(alias, "by Pennsylvania County, 2023", sep = " "))
   })
 
   ##### summary #####
@@ -134,4 +178,13 @@ server <- function(input, output, session) {
     
   })
   
+  # Downloadable csv of selected dataset ----
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste(input$variable, ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(dat(), file, row.names = FALSE)
+    }
+  )
 }
