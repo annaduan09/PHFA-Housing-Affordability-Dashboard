@@ -11,9 +11,9 @@ library(jsonlite)
 library(magrittr)
 library(HatchedPolygons)
 library(tidyverse)
-library(tigris)
 library(mapview)
 library(plotly)
+library(DT)
 
 
 #### Data processing ####  
@@ -69,7 +69,7 @@ server <- function(input, output, session) {
   
   dat = reactive({
     panel %>%
-      dplyr::select(county, variable = input$variable, lat, lon, rural)
+      dplyr::select(county, variable = input$variable, rural)
   })
   
   
@@ -80,6 +80,7 @@ server <- function(input, output, session) {
     df <- df %>%
       mutate(rural_score = ifelse(rural == 1, 100000, 0),
              order_id = rural_score + variable)
+    
 
     variable_aliases <- c(
       "owner_occ_hh_pct2021" = "Homeownership rate (%)",
@@ -135,8 +136,17 @@ return(ggplotly(barp))
   })
 
   #### Data viewer ####
-  output$table <- 
+  output$table <- DT::renderDataTable({
+    v <- input$variable
+    dat.tab <- dat() %>% 
+      as.data.frame() 
     
+    names(dat.tab) <- c("county", v, "rural")
+    
+    DT::datatable(as.data.frame(dat.tab), options = list(pageLength = 10))
+  })
+
+  
   output$sum <- renderTable({
     data.frame(quartile_1 = quantile(dat()$variable, probs = 0.25, na.rm = TRUE),
                mean = mean(dat()$variable, na.rm = TRUE),

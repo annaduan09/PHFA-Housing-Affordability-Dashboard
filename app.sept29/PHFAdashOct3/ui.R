@@ -42,7 +42,9 @@ ui <- navbarPage(theme = shinytheme("united"),
                                 tabPanel(width = 9, title = h4("Statewide Comparisons"), 
                                          plotlyOutput("plot", height = "1000px", width = "100%"),
                                          h6(textOutput("caption", container = span))),
-                                tabPanel(width = 9, title = h4("Data Viewer and Download"), h3("Summary"), tableOutput("sum")))
+                                tabPanel(width = 9, title = h4("Data Viewer"), 
+                                         h3("Data table"), DT::dataTableOutput("table"),
+                                         h3("Summary"), tableOutput("sum")))
                   )
                 )
 )
