@@ -73,7 +73,7 @@ server <- function(input, output, session) {
   })
   
   
-  #### plot ####
+  #### bar plot ####
   output$plot <- renderPlotly({
     v <- input$variable
     df <- dat() %>% as.data.frame()
@@ -114,7 +114,7 @@ return(ggplotly(barp))
     
   })
   
-  ##### plot header text #####
+  ##### barplot header text #####
   output$plotHeaderText <- renderText({
     variable_aliases <- c(
       "owner_occ_hh_pct2021" = "Homeownership rate (%)",
@@ -133,6 +133,23 @@ return(ggplotly(barp))
     v <- input$variable
     alias <- variable_aliases[v]
     return(paste(alias, "by Pennsylvania County, 2023", sep = " "))
+  })
+  
+  
+  #### scatter plot ####
+  output$scatter <- renderPlotly({
+    scatterp <- ggplot(data = dat(), aes(x = county, y = variable)) +
+      geom_point(aes(color = variable), stat = "identity") +
+      scale_color_distiller(palette = "YlGnBu", direction = 1, name = "") +
+      labs(title = "")+
+      theme_minimal() +
+      theme(legend.position = "none",
+            text = element_text(size = 16),
+            axis.title.y = element_text(face = "bold")) +
+      coord_flip() 
+    
+    return(ggplotly(scatterp))
+    
   })
 
   #### Data viewer ####
@@ -160,7 +177,7 @@ return(ggplotly(barp))
   #### Leaflet ####
   ##### title #####
   title_dat <- tags$div(
-    HTML("<strong>Indicators by County (%)</strong><br/>
+    HTML("<strong>Indicators by County</strong><br/>
         Hover to see individual counties"))
   
   ##### labels #####

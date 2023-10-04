@@ -10,19 +10,20 @@ library(jsonlite)
 library(magrittr)
 library(shinythemes)
 library(plotly)
+library(bslib)
 
-ui <- fluidPage(  tags$style(
+ui <- fluidPage(tags$style(
   HTML(
     "
       .navbar-header {
-        height: 100px; /* You can adjust the height as needed */
+        height: 60px; /* You can adjust the height as needed */
         line-height: 60px; /* Align text vertically within the header */
       }
       "
   )
 ),
-navbarPage(theme = shinytheme("united"), 
-                 title = h1("PHFA Housing Dashboard"),
+navbarPage(theme = bs_theme(bootswatch = "flatly"),
+                 title = h2("PA Housing Affordability Dashboard"),
                 sidebarLayout(
                   sidebarPanel(width = 3,
                                h2("Menu"), 
@@ -39,19 +40,21 @@ navbarPage(theme = shinytheme("united"),
                                                                                         "Housing supply" = "housing_balance",
                                                                                         "Rural" = "rural"), selected = "owner_occ_hh_pct2021"),
                   actionButton("rural", "Show Rural Counties"),
+                  br(), 
+                  br(), 
                   shiny::p("Use this web app to explore housing trends across Pennsylvania counties."),
-                  br(),  
                   downloadButton("downloadData", "Download Data"),  
                   br(),
                   )
                   ,
                   mainPanel(
-                    tabsetPanel(type = "pills",
-                                tabPanel(width = 9, title = h4("Interactive Map"), 
+                    tabsetPanel(tabPanel(width = 9, title = h4("Interactive Map"), 
                                          leafletOutput("leaflet", height = "800px", width = "100%")),
                                 tabPanel(width = 9, title = h4("Statewide Comparisons"), 
                                          plotlyOutput("plot", height = "1000px", width = "100%"),
                                          h6(textOutput("caption", container = span))),
+                                tabPanel(width = 9, title = h4("Data Explorer"), 
+                                         plotlyOutput("scatter", height = "1000px", width = "100%")),
                                 tabPanel(width = 9, title = h4("Data Viewer"), 
                                          h3("Data table"), DT::dataTableOutput("table"),
                                          h3("Summary"), tableOutput("sum")))
