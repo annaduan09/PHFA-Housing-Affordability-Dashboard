@@ -177,7 +177,41 @@ server <- function(input, output, session) {
     
   })
   
-  # Downloadable csv of selected dataset ----
+#### Rural hashing update ####
+x = reactiveVal(1)
+  observeEvent(input$rural,{
+    x(x()+1) # increment x by 1
+    x <- as.numeric(x())
+  })
+  
+  observeEvent(input$rural, {
+    if((x() %% 2) == 0) {
+      leafletProxy("leaflet") %>%
+        addPolygons(data = dat.sf(), fillColor = ~mapPalette()(dat.sf()$variable),
+                    color = "white",
+                    weight = 1,
+                    opacity = 1,
+                    fillOpacity = 0.8,
+                    dashArray = "3",
+                    highlightOptions = highlightOptions(
+                      weight = 1,
+                      color = "#666",
+                      dashArray = "",
+                      fillOpacity = 0.5,
+                      bringToFront = TRUE)) %>%
+        addPolylines(
+          color = "orange",
+          data = rural,
+          weight = 1.5,
+          layerId  = "rural") 
+    } else {
+      leafletProxy("leaflet") %>%
+        removeShape(layerId  = "rural")
+    }
+  })
+  
+  
+#### Downloadable csv of selected dataset ####
   output$downloadData <- downloadHandler(
     filename = function() {
       paste(input$variable, ".csv", sep = "")
