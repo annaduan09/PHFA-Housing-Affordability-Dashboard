@@ -17,7 +17,8 @@ library(DT)
 
 
 #### Data processing ####  
-dat <- st_read("PHFA_dash_data_October3.geojson") 
+dat <- st_read("PHFA_dash_data_October3.geojson") %>%
+  mutate(housing_balance = ifelse(housing_balance < 0, abs(housing_balance), 0))
 
 panel.sf <- dat %>%
   dplyr::select(county) %>%
@@ -51,15 +52,6 @@ server <- function(input, output, session) {
       na.color = "gray",
       reverse = FALSE)
   })
- 
-  ##### reactive dataframe #####
-  varInput.sf <- reactive({
-    input$variable
-  })
-  
-  varInput <- reactive({
-    input$variable
-  })
   
   dat.sf = reactive({
     panel.sf %>%
@@ -69,17 +61,20 @@ server <- function(input, output, session) {
   
   dat = reactive({
     panel %>%
-      dplyr::select(county, variable = input$variable, rural)
+      dplyr::select(county, variable = input$variable, 
+                    variable_bar = input$variable_bar, 
+                    variable_scatter_x = input$variable_scatter_x, variable_scatter_y = input$variable_scatter_y, 
+                    variable_tab = input$variable_tab, rural)
   })
   
   
   #### bar plot ####
   output$plot <- renderPlotly({
-    v <- input$variable
+    v <- input$variable_bar
     df <- dat() %>% as.data.frame()
     df <- df %>%
       mutate(rural_score = ifelse(rural == 1, 100000, 0),
-             order_id = rural_score + variable)
+             order_id = rural_score + variable_bar)
     
 
     variable_aliases <- c(
@@ -93,21 +88,19 @@ server <- function(input, output, session) {
       "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
       "med_gross_rent2021" = "Median gross rent ($)",
       "afford_avail_units" = "Affordable rent units available",
-      "housing_balance" = "Housing supply",
+      "housing_balance" = "Affordable housing shortage (units)",
       "rural" = "Rural"
     )
     
-    v <- input$variable
+    v <- input$variable_bar
     alias <- variable_aliases[v]
   
-barp <- ggplot(data = df, aes(x = reorder(county, order_id), y = variable, fill = variable)) +
+barp <- ggplot(data = df, aes(x = reorder(county, order_id), y = variable_bar, fill = variable_bar)) +
       geom_bar(color = "transparent", stat = "identity") +
       scale_fill_distiller(palette = "YlGnBu", direction = 1, name = "") +
-      labs(title = "", fill = alias, color = "Rural County", y = alias, x = "Urban Counties                                          Rural Counties") +
+      labs(title = paste(alias, "by PA county", sep = " "), caption = "Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/. ", fill = alias, color = "Rural County", y = alias, x = "Urban Counties                                          Rural Counties") +
       theme_minimal() +
-      theme(legend.position = "none",
-            text = element_text(size = 16),
-            axis.title.y = element_text(face = "bold")) +
+      theme(legend.position = "none") +
       coord_flip() 
 
 return(ggplotly(barp))
@@ -127,10 +120,10 @@ return(ggplotly(barp))
       "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
       "med_gross_rent2021" = "Median gross rent ($)",
       "afford_avail_units" = "Affordable rent units available",
-      "housing_balance" = "Housing supply",
+      "housing_balance" = "Affordable housing shortage (units)",
       "rural" = "Rural"
     )
-    v <- input$variable
+    v <- input$variable_bar
     alias <- variable_aliases[v]
     return(paste(alias, "by Pennsylvania County, 2023", sep = " "))
   })
@@ -138,23 +131,44 @@ return(ggplotly(barp))
   
   #### scatter plot ####
   output$scatter <- renderPlotly({
-    scatterp <- ggplot(data = dat(), aes(x = county, y = variable)) +
-      geom_point(aes(color = variable), stat = "identity") +
-      scale_color_distiller(palette = "YlGnBu", direction = 1, name = "") +
-      labs(title = "")+
-      theme_minimal() +
-      theme(legend.position = "none",
-            text = element_text(size = 16),
-            axis.title.y = element_text(face = "bold")) +
-      coord_flip() 
+df <- dat() %>% as.data.frame()
+
+variable_aliases <- c(
+  "owner_occ_hh_pct2021" = "Homeownership rate (%)",
+  "renter_occ_hh_pct2021" = "Rentership rate (%)",
+  "renter_vacant_pct2021" = "Vacant rental units (%)",
+  "med_age_home2021" = "Median age of home (years)",
+  "med_age_home2021" = "Median home value ($)",
+  "internet_hh_pct2021" = "Households with internet access (%)",
+  "rent_burdened_pct2021" = "Rent burdened households (%)",
+  "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
+  "med_gross_rent2021" = "Median gross rent ($)",
+  "afford_avail_units" = "Affordable rent units available",
+  "housing_balance" = "Affordable housing shortage (units)",
+  "rural" = "Rural"
+)
+
+x <- input$variable_scatter_x
+y <- input$variable_scatter_y
+alias_x <- variable_aliases[x]
+alias_y <- variable_aliases[y]
+
+    scatterp <- ggplot(df, aes(x = variable_scatter_x, y = variable_scatter_y)) +
+      geom_smooth(se = FALSE, colour = "gray80") +
+      geom_point(stat = "identity", aes(color = as.factor(rural))) +
+      scale_color_brewer(palette = "YlGnBu", direction = 1, name = "Rural") +
+      labs(title = paste(alias_x, "as a function of", alias_y, sep = " "), 
+           caption = "Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/.", 
+           x = alias_x, y = alias_y)+
+      theme_minimal() 
     
-    return(ggplotly(scatterp))
+    return(ggplotly(scatterp+ theme(legend.position = c(0.6, 0.6))))
     
   })
 
   #### Data viewer ####
   output$table <- DT::renderDataTable({
-    v <- input$variable
+    v <- input$variable_tab
     dat.tab <- dat() %>% 
       as.data.frame() 
     
@@ -165,11 +179,11 @@ return(ggplotly(barp))
 
   
   output$sum <- renderTable({
-    data.frame(quartile_1 = quantile(dat()$variable, probs = 0.25, na.rm = TRUE),
-               mean = mean(dat()$variable, na.rm = TRUE),
-               median = median(dat()$variable, na.rm = TRUE),
-               quartile_3 = quantile(dat()$variable, probs = 0.75, na.rm = TRUE),
-               max = max(dat()$variable, na.rm = TRUE)) 
+    data.frame(quartile_1 = quantile(dat()$variable_tab, probs = 0.25, na.rm = TRUE),
+               mean = mean(dat()$variable_tab, na.rm = TRUE),
+               median = median(dat()$variable_tab, na.rm = TRUE),
+               quartile_3 = quantile(dat()$variable_tab, probs = 0.75, na.rm = TRUE),
+               max = max(dat()$variable_tab, na.rm = TRUE)) 
     
     
   })
@@ -194,7 +208,7 @@ return(ggplotly(barp))
       "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
       "med_gross_rent2021" = "Median gross rent ($)",
       "afford_avail_units" = "Affordable rent units available",
-      "housing_balance" = "Housing supply",
+      "housing_balance" = "Affordable housing shortage (units)",
       "rural" = "Rural"
     )
     
