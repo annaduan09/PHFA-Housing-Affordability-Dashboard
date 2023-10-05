@@ -266,7 +266,7 @@ alias_y <- variable_aliases[y]
 #     x(x()+1) # increment x by 1
 #     x <- as.numeric(x())
 #   })
-#   
+# 
 #   observeEvent(input$rural, {
 #     if((x() %% 2) == 0) {
 #       leafletProxy("leaflet") %>%
