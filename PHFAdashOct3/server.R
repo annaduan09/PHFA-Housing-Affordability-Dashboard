@@ -229,6 +229,15 @@ alias_y <- variable_aliases[y]
   
   #### Leaflet map ####
   output$leaflet <- renderLeaflet({
+    var_map <- dat.sf()$variable
+    # legend labels
+    labels_map <- c(
+      as.character(quantile(var_map, probs = c(0.2))),
+      as.character(quantile(var_map, probs = c(0.4))),
+      as.character(quantile(var_map, probs = c(0.6))),
+      as.character(quantile(var_map, probs = c(0.8))),
+      as.character(quantile(var_map, probs = c(1))))
+    
     leaflet() %>%
       addPolygons(data = dat.sf(), fillColor = ~mapPalette()(dat.sf()$variable),
                   color = "white",
@@ -248,6 +257,8 @@ alias_y <- variable_aliases[y]
       addLegend(pal = mapPalette(), 
                 title = input$variable, 
                 opacity = 1, 
+                labFormat = function(type, cuts, p) {  # Here's the trick
+                  paste0(labels_map)},
                 values = quantile(dat.sf()$variable, probs = c(0, 0.2, 0.4, 0.6, 0.8, 1)),
               position = "bottomright") %>%
       addLabelOnlyMarkers(data = dat.sf(), ~dat.sf()$lon, ~dat.sf()$lat, label =  ~str_to_upper(as.character(dat.sf()$county)),
@@ -257,10 +268,14 @@ alias_y <- variable_aliases[y]
                           "font-size" = "10px")),
                         group = "county names") %>%
       addPolylines(data = rural,
-        color = "white",
+        color = "orchid",
         weight = 2,
         opacity = 1,
         group  = "rural counties") %>%
+      addLegend(group = "rural counties",
+                colors = "orchid",
+                labels = "Rural Counties",
+                position = "bottomright") %>%
       addLayersControl(
         overlayGroups = c("rural counties", "county names"), 
         options = layersControlOptions(collapsed = F))%>%
