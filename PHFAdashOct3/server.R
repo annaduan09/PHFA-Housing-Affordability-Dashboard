@@ -159,8 +159,8 @@ alias_y <- variable_aliases[y]
 
     scatterp <- ggplot(df, aes(x = variable_scatter_x, y = variable_scatter_y)) +
       geom_smooth(se = FALSE, colour = "gray80") +
-      geom_point(stat = "identity", aes(color = as.factor(rural))) +
-      scale_color_brewer(palette = "YlGnBu", direction = 1, name = "Rural") +
+      geom_point(stat = "identity", aes(color = as.factor(rural)), size = 4) +
+      scale_color_brewer(palette = "YlGnBu", direction = -1, name = "Rural") +
       labs(title = paste(alias_x, "as a function of", alias_y, sep = " "), 
            caption = "Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/.", 
            x = alias_x, y = alias_y)+
@@ -280,7 +280,8 @@ alias_y <- variable_aliases[y]
       addLayersControl(
         overlayGroups = c("rural counties", "county names"), 
         options = layersControlOptions(collapsed = F))%>%
-      groupOptions("county names", zoomLevels = 9:100)
+      groupOptions("county names", zoomLevels = 8.5:100) %>%
+      groupOptions("rural counties", zoomLevels = 8.5:100)
   })
 
 # ##### Rural hashing update #####
@@ -318,12 +319,21 @@ alias_y <- variable_aliases[y]
   
   
 #### data download ####
-  output$downloadData <- downloadHandler(
+  output$downloadDataSel <- downloadHandler(
     filename = function() {
-      paste(input$variable, ".csv", sep = "")
+      paste(input$variable_tab, ".csv", sep = "")
     },
     content = function(file) {
       write.csv(dat(), file, row.names = FALSE)
+    }
+  )
+  
+  output$downloadDataAll <- downloadHandler(
+    filename = function() {
+      "phfa_dash_2023.csv"
+    },
+    content = function(file) {
+      write.csv(panel, file, row.names = FALSE)
     }
   )
 }
