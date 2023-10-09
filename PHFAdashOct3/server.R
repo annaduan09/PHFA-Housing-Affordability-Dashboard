@@ -103,11 +103,16 @@ barp <- ggplot(data = df, aes(x = reorder(county, order_id), y = variable_bar, f
       geom_bar(color = "transparent", stat = "identity") +
       scale_fill_distiller(palette = "YlGnBu", direction = 1, name = "") +
       labs(title = paste(alias, "by PA county", sep = " "), caption = "Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/. ", fill = alias, color = "Rural County", y = alias, x = "Urban Counties                                          Rural Counties") +
-      theme_minimal() +
+     # theme_minimal() +
       theme(legend.position = "none") +
       coord_flip() 
 
-return(ggplotly(barp))
+ggplotly(barp) %>%
+  plotly::layout(margin = list(l = 50, r = 50, b = 100, t = 50),
+         annotations = list(x = 0.5, y = -0.12, text = "Source: Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/. ",
+                            xref='paper', yref='paper', showarrow = F, 
+                            xanchor='center', yanchor='bottom', xshift=0, yshift=0,
+                            font = list(size = 12, color = "gray")))
     
   })
   
@@ -162,11 +167,16 @@ alias_y <- variable_aliases[y]
       geom_point(stat = "identity", aes(color = as.factor(rural)), size = 4) +
       scale_color_brewer(palette = "YlGnBu", direction = -1, name = "Rural") +
       labs(title = paste(alias_x, "as a function of", alias_y, sep = " "), 
-           caption = "Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/.", 
-           x = alias_x, y = alias_y)+
-      theme_minimal() 
+           x = alias_x, y = alias_y)
+    #+
+     # theme_minimal() 
     
-    return(ggplotly(scatterp+ theme(legend.position = c(0.6, 0.6))))
+ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
+  plotly::layout(margin = list(l = 50, r = 50, b = 100, t = 50),
+                 annotations = list(x = 0.5, y = -0.155, text = "Source: Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/. ",
+                                    xref='paper', yref='paper', showarrow = F, 
+                                    xanchor='center', yanchor='bottom', xshift=0, yshift=0,
+                                    font = list(size = 12, color = "gray")))
     
   })
 
