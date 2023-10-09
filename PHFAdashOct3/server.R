@@ -18,12 +18,12 @@ library(DT)
 
 #### Data processing ####  
 dat <- st_read("PHFA_dash_data_October3.geojson") %>%
-  mutate(housing_balance = ifelse(housing_balance < 0, abs(housing_balance), 0))
+  dplyr::mutate(housing_balance = ifelse(housing_balance < 0, abs(housing_balance), 0))
 
 panel.sf <- dat %>%
   dplyr::select(county) %>%
   st_centroid() %>%
-  mutate(
+  dplyr::mutate(
     lat = st_coordinates(.)[, 2],
     lon = st_coordinates(.)[, 1]
   ) %>%
@@ -43,16 +43,7 @@ rural <- hatched.SpatialPolygons(panel.sf %>% dplyr::filter(rural == 1), density
 server <- function(input, output, session) {
   
   
-  
-  #### reactive palette ####
-  mapPalette <- reactive({
-    colorNumeric(
-      palette = "YlGnBu",
-      domain = NULL,
-      na.color = "gray",
-      reverse = FALSE)
-  })
-  
+
   dat.sf = reactive({
     panel.sf %>%
       dplyr::select(variable = input$variable, county, geometry, lat, lon, rural) %>%
@@ -68,12 +59,24 @@ server <- function(input, output, session) {
   })
   
   
+  
+  #### reactive palette ####
+  mapPalette <- reactive({
+    leaflet::colorQuantile(
+      palette = "YlGnBu",
+      domain = NULL,
+      reverse = FALSE,
+      probs = c(0, 0.2, 0.4, 0.6, 0.8, 1)
+    )
+  })
+  
+  
   #### bar plot ####
   output$plot <- renderPlotly({
     v <- input$variable_bar
     df <- dat() %>% as.data.frame()
     df <- df %>%
-      mutate(rural_score = ifelse(rural == 1, 100000, 0),
+      dplyr::mutate(rural_score = ifelse(rural == 1, 100000, 0),
              order_id = rural_score + variable_bar)
     
 
@@ -170,6 +173,7 @@ alias_y <- variable_aliases[y]
   output$table <- DT::renderDataTable({
     v <- input$variable_tab
     dat.tab <- dat() %>% 
+      dplyr::select(county, variable_tab, rural) %>%
       as.data.frame() 
     
     names(dat.tab) <- c("county", v, "rural")
@@ -188,7 +192,7 @@ alias_y <- variable_aliases[y]
     
   })
 
-  #### Leaflet ####
+  #### Leaflet prep ####
   ##### title #####
   title_dat <- tags$div(
     HTML("<strong>Indicators by County</strong><br/>
@@ -223,6 +227,7 @@ alias_y <- variable_aliases[y]
     ) %>% lapply(htmltools::HTML)
   })
   
+  #### Leaflet map ####
   output$leaflet <- renderLeaflet({
     leaflet() %>%
       addPolygons(data = dat.sf(), fillColor = ~mapPalette()(dat.sf()$variable),
@@ -240,7 +245,10 @@ alias_y <- variable_aliases[y]
                   label = labs_dat()) %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
       addControl(title_dat, position = "topright") %>%
-      addLegend(pal = mapPalette(), title = "", opacity = 1, values = dat.sf()$variable,
+      addLegend(pal = mapPalette(), 
+                title = input$variable, 
+                opacity = 1, 
+                values = quantile(dat.sf()$variable, probs = c(0, 0.2, 0.4, 0.6, 0.8, 1)),
               position = "bottomright") %>%
       addLabelOnlyMarkers(data = dat.sf(), ~dat.sf()$lon, ~dat.sf()$lat, label =  ~str_to_upper(as.character(dat.sf()$county)),
                         labelOptions = labelOptions(noHide = T, direction = 'center', textOnly = T, style = list(
@@ -257,7 +265,6 @@ alias_y <- variable_aliases[y]
         overlayGroups = c("rural counties", "county names"), 
         options = layersControlOptions(collapsed = F))%>%
       groupOptions("county names", zoomLevels = 9:100)
-    
   })
 
 # ##### Rural hashing update #####
