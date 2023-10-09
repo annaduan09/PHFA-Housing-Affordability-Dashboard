@@ -77,7 +77,8 @@ server <- function(input, output, session) {
     df <- dat() %>% as.data.frame()
     df <- df %>%
       dplyr::mutate(rural_score = ifelse(rural == 1, 100000, 0),
-             order_id = rural_score + variable_bar)
+             order_id = rural_score + variable_bar) %>%
+      head(input$slider_bars)
     
 
     variable_aliases <- c(
