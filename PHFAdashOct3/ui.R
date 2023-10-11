@@ -12,7 +12,7 @@ library(shinythemes)
 library(plotly)
 library(bslib)
 
-ui <- navbarPage(theme = bs_theme(bootswatch = "flatly"),
+ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                  title = "PHFA Housing Explorer",
            
         tabPanel("Interactive map", sidebarLayout(

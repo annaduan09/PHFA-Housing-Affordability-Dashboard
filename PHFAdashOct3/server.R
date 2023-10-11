@@ -161,9 +161,9 @@ alias_x <- variable_aliases[x]
 alias_y <- variable_aliases[y]
 
     scatterp <- ggplot(df, aes(x = variable_scatter_x, y = variable_scatter_y)) +
-      geom_smooth(se = FALSE, colour = "gray80") +
-      geom_point(stat = "identity", aes(color = as.factor(rural)), size = 4) +
-      scale_color_brewer(palette = "YlGnBu", direction = -1, name = "Rural") +
+      geom_smooth(se = FALSE, colour = "black", size = 0.5) +
+      geom_point(stat = "identity", aes(color = as.factor(rural)), size = 4, alpha = 0.5) +
+      scale_color_manual(values = c("cyan2", "chartreuse3"), name = "Rural") +
       labs(title = paste(alias_x, "as a function of", alias_y, sep = " "), 
            x = alias_x, y = alias_y) + theme_minimal() 
     
