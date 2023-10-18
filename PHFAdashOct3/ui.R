@@ -75,7 +75,7 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                                                                               "Median gross rent ($)" = "med_gross_rent2021",
                                                                               "Affordable rent units available" = "afford_avail_units",
                                                                               "Affordable housing shortage (units)" = "housing_balance"), selected = "housing_balance"),
-                                shiny::p("Use this scatter plot to visualize the relationship between any two housing indicators.")),
+                                shiny::p("Use this scatter plot to visualize the relationship between any two housing indicators. Click on the home icon to reset zoom/axes.")),
                    mainPanel(width = 9, br(), plotlyOutput("scatter", height = "700px", width = "80%")))),
         
         tabPanel("Data Viewer", 
@@ -109,3 +109,4 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                  p("Last update: October 2023"),
                  img(src='hip_logo.png', height = 140),
                  img(src='phfa_logo.png', height = 140)))
+
