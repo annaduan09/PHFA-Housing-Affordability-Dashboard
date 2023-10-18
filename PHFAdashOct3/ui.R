@@ -98,4 +98,12 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                              tableOutput("sum"),
                              br(),
                              downloadButton("downloadDataSel", "Selected indicator"),
-                             downloadButton("downloadDataAll", "All indicators")))))
+                             downloadButton("downloadDataAll", "All indicators")))),
+        tabPanel("About this project",
+                 p("This dashboard is a collaboration between the Pennsylvania Housing Finance Agency and the Housing Initiative at Penn. It combines Census and administrative data to visualize current housing trends across Pennsylvania counties. All data in this dashboard comes from the American Community Survey's 2021 5-year-estimates, with the exception of the Affordable Housing Shortage variable which is from CHAS. This dashboard was made entirely using the R-language in Posit's R-Shiny app interface. Full documentation for this project can be found here: [insert HIP github link]"),
+                 p("Last update: October 2023"),
+                 h4("Housing Initiative at Penn"), 
+                 p("The Housing Initiative at Penn is a housing policy research initiative based in the University of Pennsylvania's Weitzman School of Design. We conduct rigorous academic and empirical research that advances evidence-based policymaking and analyze current conditions and future trends with the potential to affect housing. Our mission is to achieve more effective, equitable housing policy at the local, state, and national levels."),
+                 br(),
+                 h4("Pennsylvania Housing Finance Agency"),
+                 p("The Pennsylvania Housing Finance Agency works to provide affordable homeownership and rental apartment options for older adults, low- and moderate-income families, and people with special housing needs. Through its carefully managed mortgage programs and investments in multifamily housing developments, as well as funding provided for community development projects, PHFA also promotes economic development across the state.")))
