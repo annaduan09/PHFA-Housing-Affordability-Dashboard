@@ -319,9 +319,9 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
       addControl(title_dat, position = "topright") %>%
       addLegend(pal = mapPalette(), 
-                title = as.character(alias), 
+                title = paste(as.character(alias), "<br>(Quintile breaks)", sep = ""), 
                 opacity = 1, 
-                labFormat = function(type, cuts, p) {  # Here's the trick
+                labFormat = function(type, cuts, p) {   
                   paste0(labels_map)},
                 values = round(quantile(dat.sf()$variable, probs = c(0, 0.2, 0.4, 0.6, 0.8, 1))),
               position = "bottomright") %>%
