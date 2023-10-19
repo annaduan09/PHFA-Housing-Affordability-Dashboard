@@ -265,8 +265,7 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
       "med_gross_rent2021" = "Median gross rent ($)",
       "afford_avail_units" = "Affordable rent units available",
       "housing_balance" = "Affordable housing shortage (units)",
-      "rural" = "Rural"
-    )
+      "rural" = "Rural")
     
     v <- input$variable
     alias <- variable_aliases[v]

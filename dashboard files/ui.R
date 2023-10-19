@@ -34,7 +34,8 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                        p(textOutput("indicator_desc_text")),
                        img(src='hip_logo.png', height = 89),
                        img(src='phfa_logo.png', height = 89)),
-          mainPanel(width = 9, leafletOutput("leaflet", height = "800px", width = "100%")))),
+          mainPanel(width = 9, leafletOutput("leaflet", height = "800px", width = "100%"),
+                    p("Source: U.S. Census Bureau. (2023). 2017-2021 American Community Survey 5 year estimates. Retrieved from US Census Bureau API using the tidycensus package in R.")))),
         
         tabPanel("Statewide comparisons", sidebarLayout(
           sidebarPanel(width = 3,h3("Affordable Housing Explorer"), 
@@ -112,7 +113,7 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
         tabPanel("About this project",
                  sidebarLayout(
                    sidebarPanel(img(src='PA.png', width = "100%"),
-                                p("Source: The Brookings Institute.")),
+                             p("Source: The Brookings Institute.")),
                    mainPanel(h4("Pennsylvania Housing Dashboard"),
                              p("This dashboard is a collaboration between the Pennsylvania Housing Finance Agency and the Housing Initiative at Penn. It combines Census and administrative data to visualize current housing trends across Pennsylvania counties. All data in this dashboard comes from the American Community Survey's 2021 5-year-estimates, with the exception of the Affordable Housing Shortage variable which is from CHAS. All census data was accessed through the US Census Bureau API using the tidycensus package in R. All data processing and preparation was completed using the following R packages: dplyr, tigris, sf, stringr, tidyr. This dashboard was made entirely using the R-language in Posit's R-Shiny app interface, and visualizations were made using the R packages leaflet, plotly, ggplt2, and pander. Full documentation for this project can be found here: [insert HIP github link]"),
                              h4("Housing Initiative at Penn"), 
@@ -123,6 +124,5 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                              p("For questions about this dashboard, please contact Anna Duan, Housing Research Analyst, at annaduan@sas.upenn.edu. The full codebase for this project can be accessed here: https://github.com/annaduan09/PHFA-Housing-Affordability-Dashboard"),
                              p("Last update: October 2023"),
                              img(src='hip_logo.png', height = 140),
-                             img(src='phfa_logo.png', height = 140))
-                 )))
+                             img(src='phfa_logo.png', height = 140)))))
 
