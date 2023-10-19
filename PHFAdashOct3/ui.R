@@ -118,6 +118,8 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                              p("The Housing Initiative at Penn is a housing policy research initiative based in the University of Pennsylvania's Weitzman School of Design. We conduct rigorous academic and empirical research that advances evidence-based policymaking and analyze current conditions and future trends with the potential to affect housing. Our mission is to achieve more effective, equitable housing policy at the local, state, and national levels."),
                              h4("Pennsylvania Housing Finance Agency"),
                              p("The Pennsylvania Housing Finance Agency works to provide affordable homeownership and rental apartment options for older adults, low- and moderate-income families, and people with special housing needs. Through its carefully managed mortgage programs and investments in multifamily housing developments, as well as funding provided for community development projects, PHFA also promotes economic development across the state."),
+                             h4("Get in touch"),
+                             p("For questions about this dashboard, please contact Anna Duan, Housing Research Analyst, at annaduan@sas.upenn.edu. The full codebase for this project can be accessed here: https://github.com/annaduan09/PHFA-Housing-Affordability-Dashboard"),
                              p("Last update: October 2023"),
                              img(src='hip_logo.png', height = 140),
                              img(src='phfa_logo.png', height = 140))

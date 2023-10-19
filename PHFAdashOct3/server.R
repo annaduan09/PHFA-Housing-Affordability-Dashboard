@@ -117,19 +117,19 @@ ggplotly(barp) %>%
   
   # ##### barplot header text #####
   # output$plotHeaderText <- renderText({
-  #   variable_aliases <- c(
-  #     "owner_occ_hh_pct2021" = "Homeownership rate (%)",
-  #     "renter_occ_hh_pct2021" = "Rentership rate (%)",
-  #     "renter_vacant_pct2021" = "Vacant rental units (%)",
-  #     "med_age_home2021" = "Median age of home (years)",
-  #     "med_age_home2021" = "Median home value ($)",
-  #     "internet_hh_pct2021" = "Households with internet access (%)",
-  #     "rent_burdened_pct2021" = "Rent burdened households (%)",
-  #     "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
-  #     "med_gross_rent2021" = "Median gross rent ($)",
-  #     "afford_avail_units" = "Affordable rent units available",
-  #     "housing_balance" = "Affordable housing shortage (units)"
-  #   )
+    # variable_aliases <- c(
+    #   "owner_occ_hh_pct2021" = "Homeownership rate (%)",
+    #   "renter_occ_hh_pct2021" = "Rentership rate (%)",
+    #   "renter_vacant_pct2021" = "Vacant rental units (%)",
+    #   "med_age_home2021" = "Median age of home (years)",
+    #   "med_age_home2021" = "Median home value ($)",
+    #   "internet_hh_pct2021" = "Households with internet access (%)",
+    #   "rent_burdened_pct2021" = "Rent burdened households (%)",
+    #   "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
+    #   "med_gross_rent2021" = "Median gross rent ($)",
+    #   "afford_avail_units" = "Affordable rent units available",
+    #   "housing_balance" = "Affordable housing shortage (units)"
+    # )
   #   v <- input$variable_bar
   #   alias <- variable_aliases[v]
   #   return(paste(alias, "by Pennsylvania County, 2023", sep = " "))
