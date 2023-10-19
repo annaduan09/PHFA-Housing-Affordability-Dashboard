@@ -17,6 +17,7 @@ library(DT)
 
 
 #### Data processing ####  
+
 dat <- st_read("PHFA_dash_data_October3.geojson") %>%
   dplyr::mutate(housing_balance = ifelse(housing_balance < 0, abs(housing_balance), 0))
 
@@ -38,10 +39,15 @@ rural <- hatched.SpatialPolygons(panel.sf %>% dplyr::filter(rural == 1), density
   st_union() %>%
   st_as_sf()
 
+state_avg <- st_read("state_avg.csv")
 
 #### Server ####
 server <- function(input, output, session) {
   
+  pa_avg = reactive({
+    state_avg %>%
+      dplyr::select(variable = input$variable)
+  })
   
 
   dat.sf = reactive({
@@ -268,8 +274,8 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
     sprintf(
       "<strong>%s County</strong><br/>
       <strong>%s</strong>: %.0f<sup></sup><br/>
-      <strong>Statewide Median:</strong> %.0f",
-      dat.sf()$county, alias, dat.sf()$variable, median(dat.sf()$variable)
+      <strong>Pennsylvania:</strong> %.0f",
+      dat.sf()$county, alias, dat.sf()$variable, round(as.numeric(pa_avg()$variable))
     ) %>% lapply(htmltools::HTML)
   })
   
