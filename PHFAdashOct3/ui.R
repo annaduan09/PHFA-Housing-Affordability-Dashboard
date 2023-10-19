@@ -28,7 +28,9 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                                                                                                     "Affordable rent units available" = "afford_avail_units",
                                                                                                     "Affordable housing shortage (units)" = "housing_balance"),
                                                                                 "Other topics" = list("Households with internet access (%)" = "internet_hh_pct2021")), selected = "owner_occ_hh_pct2021"),
-                       shiny::p("Use this web map to explore housing conditions across Pennsylvania counties. Select an indicator to begin.")),
+                       shiny::p("Use this web map to explore housing conditions across Pennsylvania counties. Select an indicator to begin."),
+                       img(src='hip_logo.png', height = 90),
+                       img(src='phfa_logo.png', height = 90)),
           mainPanel(width = 9, leafletOutput("leaflet", height = "800px", width = "100%")))),
         
         tabPanel("Statewide comparisons", sidebarLayout(
