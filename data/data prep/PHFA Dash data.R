@@ -27,10 +27,91 @@ mapTheme <- function(base_size = 15) {
 #### Pull data ####
 #### census panels
 census_api_key("d9ebfd04caa0138647fbacd94c657cdecbf705e9", install = TRUE, overwrite = TRUE)
-census_vars <- load_variables(year = 2016, dataset = "acs5")
+census_vars <- load_variables(year = 2021, dataset = "acs5")
 
 # owner occupied: B25011_002
 # all HH: B11007_001
+
+#### statewide avg - 2021 ####
+dat_PA <- get_acs(geography = "state", 
+                 variables = c("owner_occ_hh" = "B25011_002", 
+                               "total_hh" = "B11007_001",
+                               "renter_occ_hh" = "B25003_003",
+                               "hh_with_mortgage" = "B25096_002",
+                               "income_below10k" = "B19101_002",
+                               "income_10k_15k" = "B19101_003",
+                               "income_15k_20k" = "B19101_004",
+                               "income_20k_25k" = "B19101_005",
+                               "income_25k_30k" = "B19101_006",
+                               "income_30k_35k" = "B19101_007",
+                               "income_35k_40k" = "B19101_008",
+                               "income_40k_45k" = "B19101_009",
+                               "income_45k_50k" = "B19101_010",
+                               "income_50k_60k" = "B19101_011",
+                               "income_60k_75k" = "B19101_012",
+                               "income_75k_100k" = "B19101_013",
+                               "income_100k_125k" = "B19101_014",
+                               "income_125k_150k" = "B19101_015",
+                               "income_150k_200k" = "B19101_016",
+                               "income_200k_plus" = "B19101_017",
+                               "vacant_rental_units" = "B25004_002",
+                               "internet_hh" = "B28002_002",
+                               "med_year_built" = "B25035_001",
+                               "med_home_value" = "B25107_001",
+                               "medhhinc" = "B19013A_001",
+                               "med_owner_costs_mortgaged" = "B25088_002",
+                               "med_gross_rent" = "B25064_001"), year = 2021, state = "PA",
+                 geometry = FALSE, survey = "acs5", output = "wide") %>%
+  mutate(owner_occ_hh_pct = ifelse(total_hhE > 0, round(100*owner_occ_hhE/total_hhE), 0),
+         renter_occ_hh_pct = ifelse(total_hhE > 0, round(100*renter_occ_hhE/total_hhE), 0),
+         renter_vacant_pct = ifelse(renter_occ_hhE > 0, round(100*vacant_rental_unitsE/renter_occ_hhE), 0),
+         med_age_home = 2023-med_year_builtE,
+         internet_hh_pct = ifelse(total_hhE > 0, round(100*internet_hhE/total_hhE), 0),
+         rent_burdened_pct = ifelse(med_gross_rentE*12 > 5000*.3, income_below10kE/(renter_occ_hhE *0.01),
+                                    ifelse(med_gross_rentE*12 > 12500*.3, (income_below10kE + income_10k_15kE)/(renter_occ_hhE *0.01),
+                                           ifelse(med_gross_rentE*12 > 17500*.3, (income_below10kE + income_10k_15kE + income_15k_20kE)/(renter_occ_hhE *0.01),
+                                                  ifelse(med_gross_rentE*12 > 22500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE)/(renter_occ_hhE *0.01),
+                                                         ifelse(med_gross_rentE*12 > 27500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE)/(renter_occ_hhE *0.01),
+                                                                ifelse(med_gross_rentE*12 > 32500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE)/(renter_occ_hhE *0.01),
+                                                                       ifelse(med_gross_rentE*12 > 37500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE)/(renter_occ_hhE *0.01),
+                                                                              ifelse(med_gross_rentE*12 > 42500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE)/(renter_occ_hhE *0.01),
+                                                                                     ifelse(med_gross_rentE*12 > 47500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE)/(renter_occ_hhE *0.01),
+                                                                                            ifelse(med_gross_rentE*12 > 55000*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE)/(renter_occ_hhE *0.01),
+                                                                                                   ifelse(med_gross_rentE*12 > 67500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE)/(renter_occ_hhE *0.01),
+                                                                                                          ifelse(med_gross_rentE*12 > 87500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE + income_75k_100kE)/(renter_occ_hhE *0.01),
+                                                                                                                 ifelse(med_gross_rentE*12 > 112500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE + income_75k_100kE + income_100k_125kE)/(renter_occ_hhE *0.01),
+                                                                                                                        ifelse(med_gross_rentE*12 > 137500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE + income_75k_100kE + income_100k_125kE + income_125k_150kE)/(renter_occ_hhE *0.01),
+                                                                                                                               ifelse(med_gross_rentE*12 > 175000*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE + income_75k_100kE + income_100k_125kE + income_125k_150kE + income_150k_200kE)/(renter_occ_hhE *0.01),
+                                                                                                                                      ifelse(med_gross_rentE*12 > 162500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE + income_75k_100kE + income_100k_125kE + income_125k_150kE + income_200k_plusE)/(renter_occ_hhE *0.01),
+                                                                                                                                             0)))))))))))))))),
+         mortgage_burdened_pct = ifelse(med_owner_costs_mortgagedE*12 > 5000*.3, income_below10kE/(hh_with_mortgageE*0.01),
+                                        ifelse(med_owner_costs_mortgagedE*12 > 12500*.3, (income_below10kE + income_10k_15kE)/(hh_with_mortgageE*0.01),
+                                               ifelse(med_owner_costs_mortgagedE*12 > 17500*.3, (income_below10kE + income_10k_15kE + income_15k_20kE)/(hh_with_mortgageE*0.01),
+                                                      ifelse(med_owner_costs_mortgagedE*12 > 22500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE)/(hh_with_mortgageE*0.01),
+                                                             ifelse(med_owner_costs_mortgagedE*12 > 27500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE)/(hh_with_mortgageE*0.01),
+                                                                    ifelse(med_owner_costs_mortgagedE*12 > 32500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE)/(hh_with_mortgageE*0.01),
+                                                                           ifelse(med_owner_costs_mortgagedE*12 > 37500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE)/(hh_with_mortgageE*0.01),
+                                                                                  ifelse(med_owner_costs_mortgagedE*12 > 42500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE)/(hh_with_mortgageE*0.01),
+                                                                                         ifelse(med_owner_costs_mortgagedE*12 > 47500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE)/(hh_with_mortgageE*0.01),
+                                                                                                ifelse(med_owner_costs_mortgagedE*12 > 55000*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE)/(hh_with_mortgageE*0.01),
+                                                                                                       ifelse(med_owner_costs_mortgagedE*12 > 67500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE)/(hh_with_mortgageE*0.01),
+                                                                                                              ifelse(med_owner_costs_mortgagedE*12 > 87500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE + income_75k_100kE)/(hh_with_mortgageE*0.01),
+                                                                                                                     ifelse(med_owner_costs_mortgagedE*12 > 112500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE + income_75k_100kE + income_100k_125kE)/(hh_with_mortgageE*0.01),
+                                                                                                                            ifelse(med_owner_costs_mortgagedE*12 > 137500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE + income_75k_100kE + income_100k_125kE + income_125k_150kE)/(hh_with_mortgageE*0.01),
+                                                                                                                                   ifelse(med_owner_costs_mortgagedE*12 > 175000*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE + income_75k_100kE + income_100k_125kE + income_125k_150kE + income_150k_200kE)/(hh_with_mortgageE*0.01),
+                                                                                                                                          ifelse(med_owner_costs_mortgagedE*12 > 162500*0.3, (income_below10kE + income_10k_15kE + income_15k_20kE + income_20k_25kE + income_25k_30kE + income_30k_35kE + income_35k_40kE + income_40k_45kE + income_45k_50kE + income_50k_60kE + income_60k_75kE + income_75k_100kE + income_100k_125kE + income_125k_150kE + income_200k_plusE)/(hh_with_mortgageE*0.01),
+                                                                                                                                                 0)))))))))))))))),
+         county = word(NAME, 1)) %>%
+  rename(med_gross_rent = med_gross_rentE,
+         med_home_value = med_home_valueE) %>%
+  dplyr::select(owner_occ_hh_pct, renter_occ_hh_pct, renter_vacant_pct, med_age_home, med_home_value, internet_hh_pct, rent_burdened_pct, mortgage_burdened_pct, med_gross_rent) 
+
+new_column_names <- paste0(names(dat_PA), 2021)
+
+# Assign the modified column names back to the data frame
+names(dat_PA) <- new_column_names
+
+
 
 #### 2021 ####
 dat21 <- get_acs(geography = "county", 
@@ -280,6 +361,15 @@ chas <- st_read("/Users/annaduan/Documents/GitHub/PHFA\ dashboard/data/PACounty_
   mutate(Geography = word(Geography, end = 1))
 names(chas) <- c("county", "renter_hh", "afford_avail_units", "housing_balance")
 
+chas_pa <- chas %>%
+  mutate(weight = renter_hh/10000,
+         afford_avail_units_weighted = round(afford_avail_units*weight),
+         housing_balance_weighted = round(housing_balance*weight)) %>%
+  summarize(afford_avail_units = sum(afford_avail_units_weighted)/sum(weight),
+            housing_balance = sum(housing_balance_weighted)/sum(weight)) %>%
+  mutate(county = "statewide_avg",
+         renter_hh = 434595)
+
 #### Census rural-urban by county 
 rural <- st_read("/Users/annaduan/Documents/GitHub/PHFA\ dashboard/data/2020_UA_COUNTY.xlsx") %>% 
   dplyr::filter(Field1 == "42") %>%
@@ -320,6 +410,10 @@ panel.sf <- dat %>%
 
 st_write(panel.sf, "PHFA_dash_data_October3.geojson", driver="GeoJSON")
 
+
+state_avg = cbind(chas_pa, dat_PA)
+
+st_write(state_avg, "state_avg.csv", driver = "CSV")
 #### Leaflet test run ####
 dat <- st_read("/Users/annaduan/Documents/GitHub/PHFA\ dashboard/app.sept29/PHFA_dash_data_October3.geojson") %>%
   st_as_sf()

@@ -115,25 +115,25 @@ ggplotly(barp) %>%
     
   })
   
-  # ##### barplot header text #####
-  # output$plotHeaderText <- renderText({
-    # variable_aliases <- c(
-    #   "owner_occ_hh_pct2021" = "Homeownership rate (%)",
-    #   "renter_occ_hh_pct2021" = "Rentership rate (%)",
-    #   "renter_vacant_pct2021" = "Vacant rental units (%)",
-    #   "med_age_home2021" = "Median age of home (years)",
-    #   "med_age_home2021" = "Median home value ($)",
-    #   "internet_hh_pct2021" = "Households with internet access (%)",
-    #   "rent_burdened_pct2021" = "Rent burdened households (%)",
-    #   "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
-    #   "med_gross_rent2021" = "Median gross rent ($)",
-    #   "afford_avail_units" = "Affordable rent units available",
-    #   "housing_balance" = "Affordable housing shortage (units)"
-    # )
-  #   v <- input$variable_bar
-  #   alias <- variable_aliases[v]
-  #   return(paste(alias, "by Pennsylvania County, 2023", sep = " "))
-  # })
+##### leaflet menu indicator information #####
+  output$indicator_desc_text <- renderText({
+  description <- c(
+    "owner_occ_hh_pct2021" = "Homeownership rate (%) is the percentage of households that own their homes. A higher rate indicates a greater proportion of homeowners in the area.",
+    "renter_occ_hh_pct2021" = "Rentership rate (%) is the percentage of households that rent their homes. It provides insight into the proportion of the population that does not own property.",
+    "renter_vacant_pct2021" = "Vacant rental units (%) represents the percentage of rental units that are currently unoccupied. A higher percentage can suggest that there's a surplus of rental housing or potentially decreased demand.",
+    "med_age_home2021" = "Median age of home (years) indicates the midpoint age of homes in a specific area. Older median ages can suggest historical or older neighborhoods, while lower values might indicate newer developments.",
+    "med_age_home2021" = "Median home value ($) is the midpoint value of homes in the area. This can provide an insight into the overall affordability and property values of a region.",
+    "internet_hh_pct2021" = "Households with internet access (%) is the percentage of households that have access to the internet. This can provide insights into the area's technological infrastructure and development.",
+    "rent_burdened_pct2021" = "Rent burdened households (%) represents households that spend 30% or more of their income on rent. Higher percentages can suggest issues with affordability for renters.",
+    "mortgage_burdened_pct2021" = "Mortgage burdened households (%) indicates the households spending 30% or more of their income on mortgage payments. Higher percentages may show potential financial strain for homeowners.",
+    "med_gross_rent2021" = "Median gross rent ($) is the midpoint monthly rent amount households pay, inclusive of utilities. It helps gauge the typical rental costs in an area.",
+    "afford_avail_units" = "Affordable rent units available measures the total number of rental units in the area that are deemed affordable based on set income standards or thresholds.",
+    "housing_balance" = "Affordable housing shortage (units) refers to the difference between the demand for affordable housing and the supply available. A positive number indicates a shortage of affordable housing units."
+  )
+    v <- input$variable
+    desc <- description[v]
+    return(desc)
+  })
   
   
   #### scatter plot ####
