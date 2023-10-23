@@ -12,10 +12,11 @@ library(shinythemes)
 library(plotly)
 library(bslib)
 
-ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
-                 title = "PHFA Housing Explorer",
-           
-        tabPanel("Interactive map", sidebarLayout(
+ui <- (navbarPage(
+  theme = shinytheme("flatly"), collapsible = TRUE,
+  title = strong("PHFA Housing Explorer"),
+  windowTitle = "PA Housing Indicators",
+        tabPanel("PA Mapper", sidebarLayout(
           sidebarPanel(width = 3, h3("Affordable Housing Explorer"), 
                        selectInput("variable",                        
                                    p("Use this web map to explore housing conditions across Pennsylvania counties. Select an indicator to begin."),
@@ -34,10 +35,10 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                        p(textOutput("indicator_desc_text")),
                        img(src='hip_logo.png', height = 89),
                        img(src='phfa_logo.png', height = 89)),
-          mainPanel(width = 9, leafletOutput("leaflet", height = "800px", width = "100%"),
+          mainPanel(width = 9, leafletOutput("leaflet", height = "750px", width = "100%"),
                     p("Source: U.S. Census Bureau. (2023). 2017-2021 American Community Survey 5 year estimates. Retrieved from US Census Bureau API using the tidycensus package in R.")))),
         
-        tabPanel("Statewide comparisons", sidebarLayout(
+        tabPanel("County comparisons", sidebarLayout(
           sidebarPanel(width = 3,h3("Affordable Housing Explorer"), 
                        selectInput("variable_bar", "Select a variable", choices = list("Homeowners" = list("Homeownership rate (%)" = "owner_occ_hh_pct2021",
                                                                                                                      "Median home value ($)" = "med_age_home2021",
@@ -57,7 +58,7 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                        img(src='phfa_logo.png', height = 89)),
           mainPanel(width = 9, plotlyOutput("plot", height = "900px", width = "100%")))),
         
-        tabPanel("Data Explorer", 
+        tabPanel("Data plotter", 
                  sidebarLayout(
                    sidebarPanel(width = 3,h3("Affordable Housing Explorer"),
                                 selectInput("variable_scatter_x", "X variable", choices = list("Homeowners" = list("Homeownership rate (%)" = "owner_occ_hh_pct2021",
@@ -87,7 +88,7 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                                 img(src='phfa_logo.png', height = 89)),
                    mainPanel(width = 9, br(), plotlyOutput("scatter", height = "700px", width = "80%")))),
         
-        tabPanel("Data Viewer", 
+        tabPanel("Data", 
                  sidebarLayout(
                    sidebarPanel(width = 3, h3("Affordable Housing Explorer"), 
                                 selectInput("variable_tab", "Select a variable", choices = list("Homeowners" = list("Homeownership rate (%)" = "owner_occ_hh_pct2021",
@@ -110,7 +111,7 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                              br(),
                              downloadButton("downloadDataSel", "Selected indicator"),
                              downloadButton("downloadDataAll", "All indicators")))),
-        tabPanel("About this project",
+        tabPanel("About this site",
                  sidebarLayout(
                    sidebarPanel(img(src='PA.png', width = "100%"),
                              p("Source: The Brookings Institute.")),
@@ -124,5 +125,5 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "yeti"),
                              p("For questions about this dashboard, please contact Anna Duan, Housing Research Analyst, at annaduan@sas.upenn.edu. The full codebase for this project can be accessed here: https://github.com/annaduan09/PHFA-Housing-Affordability-Dashboard"),
                              p("Last update: October 2023"),
                              img(src='hip_logo.png', height = 140),
-                             img(src='phfa_logo.png', height = 140)))))
+                             img(src='phfa_logo.png', height = 140))))))
 

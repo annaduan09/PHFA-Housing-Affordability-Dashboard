@@ -17,7 +17,6 @@ library(DT)
 
 
 #### Data processing ####  
-
 dat <- st_read("PHFA_dash_data_October3.geojson") %>%
   dplyr::mutate(housing_balance = ifelse(housing_balance < 0, abs(housing_balance), 0))
 
@@ -307,7 +306,7 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
       as.character(quantile(var_map, probs = c(0.8))),
       as.character(quantile(var_map, probs = c(1))))
     
-    leaflet() %>%
+    leaflet(options = leafletOptions(minZoom = 7.5)) %>%
       addPolygons(data = dat.sf(), fillColor = ~mapPalette()(dat.sf()$variable),
                   color = "white",
                   weight = 1,
