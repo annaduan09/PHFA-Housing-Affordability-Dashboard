@@ -276,8 +276,8 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
       dat.sf()$county, alias, dat.sf()$variable, round(as.numeric(pa_avg()$variable))
     ) %>% lapply(htmltools::HTML)
   })
+
   
-  #### Leaflet map ####
   output$leaflet <- renderLeaflet({
     variable_aliases <- c(
       "owner_occ_hh_pct2021" = "Homeownership rate (%)",
@@ -306,7 +306,16 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
       as.character(quantile(var_map, probs = c(0.8))),
       as.character(quantile(var_map, probs = c(1))))
     
+    #### Leaflet map ####
     leaflet(options = leafletOptions(minZoom = 7.5)) %>%
+      addProviderTiles(providers$CartoDB.Positron) %>%
+      setView( lng = -77.83069
+               , lat = 40.94503
+               , zoom = 7 ) %>%
+      setMaxBounds(lng1 = -81.7787
+                    , lat1 = 38.77897
+                    , lng2 = -73.46516
+                    , lat2 = 43.45229) %>%
       addPolygons(data = dat.sf(), fillColor = ~mapPalette()(dat.sf()$variable),
                   color = "white",
                   weight = 1,
@@ -320,7 +329,6 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
                     fillOpacity = 0.5,
                     bringToFront = TRUE),
                   label = labs_dat()) %>%
-      addProviderTiles(providers$CartoDB.Positron) %>%
       addControl(title_dat, position = "topright") %>%
       addLegend(pal = mapPalette(), 
                 title = paste(as.character(alias), "<br>(Quintile breaks)", sep = ""), 
