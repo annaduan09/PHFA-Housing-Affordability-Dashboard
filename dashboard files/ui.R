@@ -11,6 +11,7 @@ library(magrittr)
 library(shinythemes)
 library(plotly)
 library(bslib)
+library(shinybrowser)
 
 ui <- (navbarPage(
   theme = shinytheme("flatly"), collapsible = TRUE,
