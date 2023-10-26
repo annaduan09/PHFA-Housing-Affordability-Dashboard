@@ -11,7 +11,7 @@ library(leaflet)
 library(stringr)
 library(jsonlite)
 library(magrittr)
-library(HatchedPolygons)
+# library(HatchedPolygons)
 library(tidyverse)
 library(mapview)
 library(plotly)
@@ -36,7 +36,8 @@ panel.sf <- dat %>%
 panel <- st_drop_geometry(panel.sf)
 
 
-rural <- hatched.SpatialPolygons(panel.sf %>% dplyr::filter(rural == 1), density = 13, angle = c(45, 135)) %>%
+rural <- panel.sf %>% 
+  dplyr::filter(rural != 1) %>%
   st_union() %>%
   st_as_sf()
 
@@ -345,9 +346,9 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
                           "font-family" = "sans-serif",
                           "font-size" = "10px")),
                         group = "county names") %>%
-      addPolylines(data = rural,
+      addPolygons(data = rural,
         color = "orchid",
-        weight = 2,
+        weight = 5,
         opacity = 1,
         group  = "rural counties") %>%
       addLegend(group = "rural counties",
