@@ -13,16 +13,25 @@ library(plotly)
 library(bslib)
 library(shinybrowser)
 
+sidebarPanel2 <- function (..., out = NULL, width = 4) 
+{
+  div(class = paste0("col-sm-", width), 
+      tags$form(class = "well", ...),
+      out
+  )
+}
+
+
 ui <- (navbarPage(
   theme = shinytheme("flatly"), collapsible = TRUE,
   title = strong("PHFA Housing Explorer"),
   windowTitle = "PA Housing Indicators",
         tabPanel("PA Mapper", sidebarLayout(
-          sidebarPanel(width = 3, h3("Affordable Housing Explorer"), 
+          sidebarPanel2(width = 3, h3("Affordable Housing Explorer"), 
                        selectInput("variable",                        
                                    p("Use this web map to explore housing conditions across Pennsylvania counties. Select an indicator to begin."),
                                    choices = list("Homeowners" = list("Homeownership rate (%)" = "owner_occ_hh_pct2021",
-                                                                                                  "Median home value ($)" = "med_age_home2021",
+                                                                                                  "Median home value ($)" = "med_home_value2021",
                                                                                                   "Mortgage burdened households (%)" = "mortgage_burdened_pct2021"),
                                                                                 "Renter households" = list("Rentership rate (%)" = "renter_occ_hh_pct2021",
                                                                                                         "Rent burdened households (%)" = "rent_burdened_pct2021",
@@ -34,15 +43,16 @@ ui <- (navbarPage(
                                                                                 "Other topics" = list("Households with internet access (%)" = "internet_hh_pct2021")), selected = "owner_occ_hh_pct2021"),
                        strong("About this indicator"),
                        p(textOutput("indicator_desc_text")),
-                       img(src='hip_logo.png', height = 89),
-                       img(src='phfa_logo.png', height = 89)),
-          mainPanel(width = 9, leafletOutput("leaflet", height = "750px", width = "100%"),
-                    p("Source: U.S. Census Bureau. (2023). 2017-2021 American Community Survey 5 year estimates. Retrieved from US Census Bureau API using the tidycensus package in R.")))),
+                       p("Source: U.S. Census Bureau. (2023). 2017-2021 American Community Survey 5 year estimates. Retrieved from US Census Bureau API using the tidycensus package in R."),
+                       out = 
+                         img(src='logos.png', height = 120)
+                       ),
+          mainPanel(width = 9, leafletOutput("leaflet", height = "750px", width = "100%")))),
         
         tabPanel("County comparisons", sidebarLayout(
-          sidebarPanel(width = 3,h3("Affordable Housing Explorer"), 
+          sidebarPanel2(width = 3,h3("Affordable Housing Explorer"), 
                        selectInput("variable_bar", "Select a variable", choices = list("Homeowners" = list("Homeownership rate (%)" = "owner_occ_hh_pct2021",
-                                                                                                                     "Median home value ($)" = "med_age_home2021",
+                                                                                                                     "Median home value ($)" = "med_home_value2021",
                                                                                                                      "Mortgage burdened households (%)" = "mortgage_burdened_pct2021"),
                                                                                                  "Renter households" = list("Rentership rate (%)" = "renter_occ_hh_pct2021",
                                                                                                                             "Rent burdened households (%)" = "rent_burdened_pct2021",
@@ -55,15 +65,15 @@ ui <- (navbarPage(
                        sliderInput("slider_bars", label = "Counties to show", min = 5, max = 67, value = 18, step = 1, round = TRUE, ticks = TRUE, post = "counties"),
                        br(), 
                        shiny::p("Select an indicator to compare across counties and rural status. Use the slider bar to show more or fewer counties."),
-                       img(src='hip_logo.png', height = 89),
-                       img(src='phfa_logo.png', height = 89)),
-          mainPanel(width = 9, plotlyOutput("plot", height = "900px", width = "100%")))),
+                       out = 
+                         img(src='logos.png', height = 120)),
+          mainPanel(width = 9, plotlyOutput("plot", height = "100%", width = "900px")))),
         
         tabPanel("Data plotter", 
                  sidebarLayout(
-                   sidebarPanel(width = 3,h3("Affordable Housing Explorer"),
+                   sidebarPanel2(width = 3,h3("Affordable Housing Explorer"),
                                 selectInput("variable_scatter_x", "X variable", choices = list("Homeowners" = list("Homeownership rate (%)" = "owner_occ_hh_pct2021",
-                                                                                                                   "Median home value ($)" = "med_age_home2021",
+                                                                                                                   "Median home value ($)" = "med_home_value2021",
                                                                                                                    "Mortgage burdened households (%)" = "mortgage_burdened_pct2021"),
                                                                                                "Renter households" = list("Rentership rate (%)" = "renter_occ_hh_pct2021",
                                                                                                                           "Rent burdened households (%)" = "rent_burdened_pct2021",
@@ -74,7 +84,7 @@ ui <- (navbarPage(
                                                                                                                       "Affordable housing shortage (units)" = "housing_balance"),
                                                                                                "Other topics" = list("Households with internet access (%)" = "internet_hh_pct2021")), selected = "owner_occ_hh_pct2021"),
                                 selectInput("variable_scatter_y", "Y variable", choices = list("Homeowners" = list("Homeownership rate (%)" = "owner_occ_hh_pct2021",
-                                                                                                                   "Median home value ($)" = "med_age_home2021",
+                                                                                                                   "Median home value ($)" = "med_home_value2021",
                                                                                                                    "Mortgage burdened households (%)" = "mortgage_burdened_pct2021"),
                                                                                                "Renter households" = list("Rentership rate (%)" = "renter_occ_hh_pct2021",
                                                                                                                           "Rent burdened households (%)" = "rent_burdened_pct2021",
@@ -85,15 +95,15 @@ ui <- (navbarPage(
                                                                                                                       "Affordable housing shortage (units)" = "housing_balance"),
                                                                                                "Other topics" = list("Households with internet access (%)" = "internet_hh_pct2021")), selected = "housing_balance"),
                                 shiny::p("Use this scatter plot to visualize the relationship between any two housing indicators. Click on the home icon to reset zoom/axes."),
-                                img(src='hip_logo.png', height = 89),
-                                img(src='phfa_logo.png', height = 89)),
-                   mainPanel(width = 9, br(), plotlyOutput("scatter", height = "700px", width = "80%")))),
+                                out = 
+                                  img(src='logos.png', height = 120)),
+                   mainPanel(width = 9, br(), plotlyOutput("scatter", height = "600px", width = "100%")))),
         
         tabPanel("Data", 
                  sidebarLayout(
-                   sidebarPanel(width = 3, h3("Affordable Housing Explorer"), 
+                   sidebarPanel2(width = 3, h3("Affordable Housing Explorer"), 
                                 selectInput("variable_tab", "Select a variable", choices = list("Homeowners" = list("Homeownership rate (%)" = "owner_occ_hh_pct2021",
-                                                                                                                    "Median home value ($)" = "med_age_home2021",
+                                                                                                                    "Median home value ($)" = "med_home_value2021",
                                                                                                                     "Mortgage burdened households (%)" = "mortgage_burdened_pct2021"),
                                                                                                 "Renter households" = list("Rentership rate (%)" = "renter_occ_hh_pct2021",
                                                                                                                            "Rent burdened households (%)" = "rent_burdened_pct2021",
@@ -104,8 +114,8 @@ ui <- (navbarPage(
                                                                                                                        "Affordable housing shortage (units)" = "housing_balance"),
                                                                                                 "Other topics" = list("Households with internet access (%)" = "internet_hh_pct2021")), selected = "owner_occ_hh_pct2021"),
                                 shiny::p("Use this table to view data for any indicator by county. Data used in this dashboard can be downloaded as a CSV file."),
-                                img(src='hip_logo.png', height = 89),
-                                img(src='phfa_logo.png', height = 89)),
+                                out = 
+                                  img(src='logos.png', height = 120)),
                    mainPanel(width = 9, h4(textOutput("tableheader")), DT::dataTableOutput("table"),
                              br(),
                              tableOutput("sum"),
@@ -116,13 +126,15 @@ ui <- (navbarPage(
                  sidebarLayout(
                    sidebarPanel(img(src='PA.png', width = "100%"),
                              p("Source: The Brookings Institute.")),
-                   mainPanel(h4("Pennsylvania Housing Dashboard"),
-                             p("This dashboard is a collaboration between the Pennsylvania Housing Finance Agency and the Housing Initiative at Penn. It combines Census and administrative data to visualize current housing trends across Pennsylvania counties. All data in this dashboard comes from the American Community Survey's 2021 5-year-estimates, with the exception of the Affordable Housing Shortage variable which is from CHAS. All census data was accessed through the US Census Bureau API using the tidycensus package in R. All data processing and preparation was completed using the following R packages: dplyr, tigris, sf, stringr, tidyr. This dashboard was made entirely using the R-language in Posit's R-Shiny app interface, and visualizations were made using the R packages leaflet, plotly, ggplt2, and pander. Full documentation for this project can be found here: [insert HIP github link]"),
-                             h4("Housing Initiative at Penn"), 
+                   mainPanel(strong("Pennsylvania Housing Dashboard"),
+                             p("This dashboard is a collaboration between the Pennsylvania Housing Finance Agency and the Housing Initiative at Penn. The dashboard shows  current housing trends across Pennsylvania counties based on data from the U.S. Census Bureau 5-year American Community Survey and U.S. Department of Housing and Urban Development’s Comprehensive Housing Affordability Strategy."),
+                             strong("About the Housing Initiative at Penn"), 
                              p("The Housing Initiative at Penn is a housing policy research initiative based in the University of Pennsylvania's Weitzman School of Design. We conduct rigorous academic and empirical research that advances evidence-based policymaking and analyze current conditions and future trends with the potential to affect housing. Our mission is to achieve more effective, equitable housing policy at the local, state, and national levels."),
-                             h4("Pennsylvania Housing Finance Agency"),
+                             strong("About the Pennsylvania Housing Finance Agency"),
                              p("The Pennsylvania Housing Finance Agency works to provide affordable homeownership and rental apartment options for older adults, low- and moderate-income families, and people with special housing needs. Through its carefully managed mortgage programs and investments in multifamily housing developments, as well as funding provided for community development projects, PHFA also promotes economic development across the state."),
-                             h4("Get in touch"),
+                             strong("Methods"),
+                             p("All data in this dashboard comes from the American Community Survey's 2021 5-year-estimates, with the exception of the Affordable Housing Shortage variable, which is from HUD’s Comprehensive Housing Affordability Strategy dataset (2019). All census data was accessed through the US Census Bureau API using the tidycensus package in R. All data processing and preparation was completed using the following R packages: dplyr, tigris, sf, stringr, tidyr. This dashboard was made entirely using the R-language in Posit's R-Shiny app interface, and visualizations were made using the R packages leaflet, plotly, ggplot2, and pander. Full documentation for this project can be found here: [insert HIP github link]"),
+                             strong("Get in touch"),
                              p("For questions about this dashboard, please contact Anna Duan, Housing Research Analyst, at annaduan@sas.upenn.edu. The full codebase for this project can be accessed here: https://github.com/annaduan09/PHFA-Housing-Affordability-Dashboard"),
                              p("Last update: October 2023"),
                              img(src='hip_logo.png', height = 140),

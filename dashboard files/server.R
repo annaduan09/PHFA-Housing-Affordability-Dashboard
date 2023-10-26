@@ -11,7 +11,6 @@ library(leaflet)
 library(stringr)
 library(jsonlite)
 library(magrittr)
-# library(HatchedPolygons)
 library(tidyverse)
 library(mapview)
 library(plotly)
@@ -45,6 +44,7 @@ state_avg <- st_read("state_avg.csv")
 
 #### Server ####
 server <- function(input, output, session) {
+
   
   pa_avg = reactive({
     state_avg %>%
@@ -342,7 +342,7 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
               position = "bottomright") %>%
       addLabelOnlyMarkers(data = dat.sf(), ~dat.sf()$lon, ~dat.sf()$lat, label =  ~as.character(dat.sf()$county),
                         labelOptions = labelOptions(noHide = T, direction = 'center', textOnly = T, style = list(
-                          "color" = "gray",
+                          "color" = "white",
                           "font-family" = "sans-serif",
                           "font-size" = "10px")),
                         group = "county names") %>%
@@ -362,39 +362,6 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
       groupOptions("rural counties", zoomLevels = 8.5:100)
   })
 
-# ##### Rural hashing update #####
-# x = reactiveVal(1)
-#   observeEvent(input$rural,{
-#     x(x()+1) # increment x by 1
-#     x <- as.numeric(x())
-#   })
-# 
-#   observeEvent(input$rural, {
-#     if((x() %% 2) == 0) {
-#       leafletProxy("leaflet") %>%
-#         addPolygons(data = dat.sf(), fillColor = ~mapPalette()(dat.sf()$variable),
-#                     color = "white",
-#                     weight = 1,
-#                     opacity = 1,
-#                     fillOpacity = 0.8,
-#                     dashArray = "3",
-#                     highlightOptions = highlightOptions(
-#                       weight = 1,
-#                       color = "#666",
-#                       dashArray = "",
-#                       fillOpacity = 0.5,
-#                       bringToFront = TRUE)) %>%
-#         addPolylines(
-#           color = "white",
-#           data = rural,
-#           weight = 1.5,
-#           layerId  = "rural") 
-#     } else {
-#       leafletProxy("leaflet") %>%
-#         removeShape(layerId  = "rural")
-#     }
-#   })
-  
   
 #### data download ####
   output$downloadDataSel <- downloadHandler(
