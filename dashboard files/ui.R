@@ -27,8 +27,13 @@ ui <- (navbarPage(
   theme = shinytheme("flatly"), collapsible = TRUE,
   title = strong("PHFA Housing Explorer"),
   windowTitle = "PA Affordable Housing",
-        tabPanel("PA Mapper", sidebarLayout(
-          sidebarPanel2(width = 3, h3("Affordable Housing Explorer"), 
+        tabPanel("PA Mapper", 
+         tags$head(includeCSS("styles.css")),
+         leafletOutput("leaflet", height = "800px", width = "100%"),
+         absolutePanel(id = "controls", class = "panel panel-default",
+                       top = 75, left = 55, width = 250, fixed=TRUE,
+                       draggable = TRUE, height = "auto",
+                        h3("Affordable Housing Explorer"), 
                        selectInput("variable",                        
                                    p("Use this web map to explore housing conditions across Pennsylvania counties. Select an indicator to begin."),
                                    choices = list("Homeowners" = list("Homeownership rate (%)" = "owner_occ_hh_pct2021",
@@ -47,10 +52,12 @@ ui <- (navbarPage(
                        p("Source: U.S. Census Bureau. (2023). 2017-2021 American Community Survey 5 year estimates. Retrieved from US Census Bureau API using the tidycensus package in R."),
                        out = 
                          img(src='logos.png', height = 120)
-                       ),
-          mainPanel(width = 9, leafletOutput("leaflet", height = "750px", width = "100%")))),
+                       )
+  ),
         
-        tabPanel("County comparisons", sidebarLayout(
+        tabPanel("County comparisons", 
+                 tags$head(includeCSS("styles.css")),
+                 sidebarLayout(
           sidebarPanel2(width = 3,h3("Affordable Housing Explorer"), 
                        selectInput("variable_bar", "Select a variable", choices = list("Homeowners" = list("Homeownership rate (%)" = "owner_occ_hh_pct2021",
                                                                                                                      "Median home value ($)" = "med_home_value2021",
