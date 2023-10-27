@@ -67,7 +67,7 @@ ui <- (navbarPage(
                        shiny::p("Select an indicator to compare across counties and rural status. Use the slider bar to show more or fewer counties."),
                        out = 
                          img(src='logos.png', height = 120)),
-          mainPanel(width = 9, plotlyOutput("plot", height = "100%", width = "900px")))),
+          mainPanel(width = 9, plotlyOutput("plot", height = "700px", width = "100%")))),
         
         tabPanel("Data plotter", 
                  sidebarLayout(

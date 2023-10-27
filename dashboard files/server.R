@@ -116,7 +116,7 @@ barp <- ggplot(data = df, aes(x = reorder(county, order_id), y = variable_bar, f
 
 ggplotly(barp) %>%
   plotly::layout(margin = list(l = 50, r = 50, b = 100, t = 50),
-         annotations = list(x = 0.5, y = -0.12, text = "Source: Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/. ",
+         annotations = list(x = 0.5, y = -0.15, text = "Source: Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/. ",
                             xref='paper', yref='paper', showarrow = F, 
                             xanchor='center', yanchor='bottom', xshift=0, yshift=0,
                             font = list(size = 12, color = "gray")))
@@ -177,7 +177,7 @@ alias_y <- variable_aliases[y]
     
 ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
   plotly::layout(margin = list(l = 50, r = 50, b = 100, t = 50),
-                 annotations = list(x = 0.5, y = -0.155, text = "Source: Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/. ",
+                 annotations = list(x = 0.5, y = -0.2, text = "Source: Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/. ",
                                     xref='paper', yref='paper', showarrow = F, 
                                     xanchor='center', yanchor='bottom', xshift=0, yshift=0,
                                     font = list(size = 12, color = "gray")))
@@ -355,7 +355,7 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
                 colors = "orchid",
                 labels = "Rural Counties",
                 position = "bottomright") %>%
-      addLayersControl(
+      addLayersControl(position = "bottomright",
         overlayGroups = c("rural counties", "county names"), 
         options = layersControlOptions(collapsed = F))%>%
       groupOptions("county names", zoomLevels = 8.5:100) %>%
