@@ -58,6 +58,35 @@ variable_aliases <- c(
 "rural" = "Rural"
 )
 
+# prefixes for legend labels 
+variable_prefix <- c(
+"owner_occ_hh_pct2021" = "",
+"renter_occ_hh_pct2021" = "",
+"renter_vacant_pct2021" = "",
+"med_age_home2021" = "",
+"med_home_value2021" = "$",
+"internet_hh_pct2021" = "",
+"rent_burdened_pct2021" = "",
+"mortgage_burdened_pct2021" = "",
+"med_gross_rent2021" = "$",
+"afford_avail_units" = "",
+"housing_balance" = ""
+)
+# suffixes for legend labels
+variable_suffix <- c(
+  "owner_occ_hh_pct2021" = "%",
+  "renter_occ_hh_pct2021" = "%",
+  "renter_vacant_pct2021" = "%",
+  "med_age_home2021" = " years",
+  "med_home_value2021" = "",
+  "internet_hh_pct2021" = "%",
+  "rent_burdened_pct2021" = "%",
+  "mortgage_burdened_pct2021" = "%",
+  "med_gross_rent2021" = "",
+  "afford_avail_units" = " units",
+  "housing_balance" = " units"
+)
+
 #### Server ####
 server <- function(input, output, session) {
 
@@ -230,7 +259,8 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
 
     v <- input$variable
     alias <- variable_aliases[v]
-    
+    prefix <- variable_prefix[v]
+    suffix <- variable_suffix[v]
     var_map <- dat.sf()$variable
 
     # legend labels
@@ -269,7 +299,8 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
                 title = paste(as.character(alias), "<br>(Quintile breaks)", sep = ""), 
                 opacity = 1, 
                 labFormat = function(type, cuts, p) {   
-                  paste0(labels_map)},
+                  return(paste0(prefix, labels_map, suffix))
+                },
                 values = round(quantile(dat.sf()$variable, probs = c(0, 0.2, 0.4, 0.6, 0.8, 1))),
               position = "bottomright") %>%
       addLabelOnlyMarkers(data = dat.sf(), ~dat.sf()$lon, ~dat.sf()$lat, label =  ~as.character(dat.sf()$county),

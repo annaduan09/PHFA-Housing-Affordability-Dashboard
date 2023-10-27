@@ -49,7 +49,6 @@ ui <- navbarPage(
                                                                                 "Other topics" = list("Households with internet access (%)" = "internet_hh_pct2021")), selected = "owner_occ_hh_pct2021"),
                        strong("About this indicator"),
                        p(textOutput("indicator_desc_text")),
-                       p("Source: U.S. Census Bureau. (2023). 2017-2021 American Community Survey 5 year estimates. Retrieved from US Census Bureau API using the tidycensus package in R."),
                        out = 
                          img(src='logos.png', height = 120)
                        )
