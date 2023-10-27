@@ -23,19 +23,19 @@ sidebarPanel2 <- function (..., out = NULL, width = 4) #for putting logo outside
 }
 
 
-ui <- (navbarPage(
+ui <- navbarPage(
   theme = shinytheme("flatly"), collapsible = TRUE,
-  title = strong("PHFA Housing Explorer"),
-  windowTitle = "PA Affordable Housing",
+  title = strong("Pennsylvania Housing Explorer"),
+  windowTitle = "PA Housing Data Explorer",
         tabPanel("PA Mapper", 
          tags$head(includeCSS("styles.css")),
-         leafletOutput("leaflet", height = "800px", width = "100%"),
+         leafletOutput("leaflet", height = "90vh", width = "100%"),
          absolutePanel(id = "controls", class = "panel panel-default",
-                       top = 75, left = 55, width = 250, fixed=TRUE,
+                       top = 110, left = 55, width = 250, fixed=TRUE,
                        draggable = TRUE, height = "auto",
-                        h3("Affordable Housing Explorer"), 
+                        h3("Pennsylvania Housing Data Explorer"), 
                        selectInput("variable",                        
-                                   p("Use this web map to explore housing conditions across Pennsylvania counties. Select an indicator to begin."),
+                                   p("Use this web map to explore housing conditions across Pennsylvania counties. Select an indicator to begin. For best experience, please view on computer browser."),
                                    choices = list("Homeowners" = list("Homeownership rate (%)" = "owner_occ_hh_pct2021",
                                                                                                   "Median home value ($)" = "med_home_value2021",
                                                                                                   "Mortgage burdened households (%)" = "mortgage_burdened_pct2021"),
@@ -146,5 +146,5 @@ ui <- (navbarPage(
                              p("For questions about this dashboard, please contact Anna Duan, Housing Research Analyst, at annaduan@sas.upenn.edu. The full codebase for this project can be accessed here: https://github.com/annaduan09/PHFA-Housing-Affordability-Dashboard"),
                              p("Last update: October 2023"),
                              img(src='hip_logo.png', height = 140),
-                             img(src='phfa_logo.png', height = 140))))))
+                             img(src='phfa_logo.png', height = 140)))))
 

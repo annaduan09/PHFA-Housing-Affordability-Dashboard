@@ -42,6 +42,22 @@ rural <- panel.sf %>%
 
 state_avg <- st_read("state_avg.csv")
 
+# variable aliases for display
+variable_aliases <- c(
+"owner_occ_hh_pct2021" = "Homeownership rate (%)",
+"renter_occ_hh_pct2021" = "Rentership rate (%)",
+"renter_vacant_pct2021" = "Vacant rental units (%)",
+"med_age_home2021" = "Median age of home (years)",
+"med_home_value2021" = "Median home value ($)",
+"internet_hh_pct2021" = "Households with internet access (%)",
+"rent_burdened_pct2021" = "Rent burdened households (%)",
+"mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
+"med_gross_rent2021" = "Median gross rent ($)",
+"afford_avail_units" = "Affordable rent units available",
+"housing_balance" = "Affordable housing shortage (units)",
+"rural" = "Rural"
+)
+
 #### Server ####
 server <- function(input, output, session) {
 
@@ -88,21 +104,6 @@ server <- function(input, output, session) {
              order_id = rural_score + variable_bar) %>%
       head(input$slider_bars)
     
-    variable_aliases <- c(
-      "owner_occ_hh_pct2021" = "Homeownership rate (%)",
-      "renter_occ_hh_pct2021" = "Rentership rate (%)",
-      "renter_vacant_pct2021" = "Vacant rental units (%)",
-      "med_age_home2021" = "Median age of home (years)",
-      "med_age_home2021" = "Median home value ($)",
-      "internet_hh_pct2021" = "Households with internet access (%)",
-      "rent_burdened_pct2021" = "Rent burdened households (%)",
-      "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
-      "med_gross_rent2021" = "Median gross rent ($)",
-      "afford_avail_units" = "Affordable rent units available",
-      "housing_balance" = "Affordable housing shortage (units)",
-      "rural" = "Rural"
-    )
-    
     v <- input$variable_bar
     alias <- variable_aliases[v]
   
@@ -132,8 +133,8 @@ ggplotly(barp) %>%
     "med_age_home2021" = "Median age of home (years) indicates the midpoint age of homes in a specific area. Older median ages can suggest historical or older neighborhoods, while lower values might indicate newer developments.",
     "med_age_home2021" = "Median home value ($) is the midpoint value of homes in the area. This can provide an insight into the overall affordability and property values of a region.",
     "internet_hh_pct2021" = "Households with internet access (%) is the percentage of households that have access to the internet. This can provide insights into the area's technological infrastructure and development.",
-    "rent_burdened_pct2021" = "Rent burdened households (%) represents households that spend 30% or more of their income on rent. Higher percentages can suggest issues with affordability for renters.",
-    "mortgage_burdened_pct2021" = "Mortgage burdened households (%) indicates the households spending 30% or more of their income on mortgage payments. Higher percentages may show potential financial strain for homeowners.",
+    "rent_burdened_pct2021" = "Rent burdened households (%) represents low-income households that spend 30% or more of their income on rent. Higher percentages can suggest issues with affordability for low-income renters.",
+    "mortgage_burdened_pct2021" = "Mortgage burdened households (%) indicates the low-income households spending 30% or more of their income on mortgage payments. Higher percentages may show potential financial strain for low-income homeowners.",
     "med_gross_rent2021" = "Median gross rent ($) is the midpoint monthly rent amount households pay, inclusive of utilities. It helps gauge the typical rental costs in an area.",
     "afford_avail_units" = "Affordable rent units available measures the total number of rental units in the area that are deemed affordable based on set income standards or thresholds.",
     "housing_balance" = "Affordable housing shortage (units) refers to the difference between the demand for affordable housing and the supply available. A positive number indicates a shortage of affordable housing units."
@@ -148,20 +149,6 @@ ggplotly(barp) %>%
   output$scatter <- renderPlotly({
 df <- dat() %>% as.data.frame()
 
-variable_aliases <- c(
-  "owner_occ_hh_pct2021" = "Homeownership rate (%)",
-  "renter_occ_hh_pct2021" = "Rentership rate (%)",
-  "renter_vacant_pct2021" = "Vacant rental units (%)",
-  "med_age_home2021" = "Median age of home (years)",
-  "med_age_home2021" = "Median home value ($)",
-  "internet_hh_pct2021" = "Households with internet access (%)",
-  "rent_burdened_pct2021" = "Rent burdened households (%)",
-  "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
-  "med_gross_rent2021" = "Median gross rent ($)",
-  "afford_avail_units" = "Affordable rent units available",
-  "housing_balance" = "Affordable housing shortage (units)",
-  "rural" = "Rural"
-)
 
 x <- input$variable_scatter_x
 y <- input$variable_scatter_y
@@ -187,22 +174,6 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
   #### Data table ####
   output$table <- DT::renderDataTable({
     v <- input$variable_tab
-    
-    variable_aliases <- c(
-      "owner_occ_hh_pct2021" = "Homeownership rate (%)",
-      "renter_occ_hh_pct2021" = "Rentership rate (%)",
-      "renter_vacant_pct2021" = "Vacant rental units (%)",
-      "med_age_home2021" = "Median age of home (years)",
-      "med_age_home2021" = "Median home value ($)",
-      "internet_hh_pct2021" = "Households with internet access (%)",
-      "rent_burdened_pct2021" = "Rent burdened households (%)",
-      "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
-      "med_gross_rent2021" = "Median gross rent ($)",
-      "afford_avail_units" = "Affordable rent units available",
-      "housing_balance" = "Affordable housing shortage (units)",
-      "rural" = "Rural"
-    )
-
     alias <- variable_aliases[v]
     
     dat.tab <- dat() %>% 
@@ -216,19 +187,7 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
   
   #####  data table text #####
   output$tableheader <- renderText({
-    variable_aliases <- c(
-      "owner_occ_hh_pct2021" = "Homeownership rate (%)",
-      "renter_occ_hh_pct2021" = "Rentership rate (%)",
-      "renter_vacant_pct2021" = "Vacant rental units (%)",
-      "med_age_home2021" = "Median age of home (years)",
-      "med_age_home2021" = "Median home value ($)",
-      "internet_hh_pct2021" = "Households with internet access (%)",
-      "rent_burdened_pct2021" = "Rent burdened households (%)",
-      "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
-      "med_gross_rent2021" = "Median gross rent ($)",
-      "afford_avail_units" = "Affordable rent units available",
-      "housing_balance" = "Affordable housing shortage (units)"
-    )
+
     v <- input$variable_tab
     alias <- variable_aliases[v]
     return(paste(alias, "rankings, 2023", sep = " "))
@@ -254,21 +213,7 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
   
   ##### labels #####
   labs_dat <- reactive({
-    
-    variable_aliases <- c(
-      "owner_occ_hh_pct2021" = "Homeownership rate (%)",
-      "renter_occ_hh_pct2021" = "Rentership rate (%)",
-      "renter_vacant_pct2021" = "Vacant rental units (%)",
-      "med_age_home2021" = "Median age of home (years)",
-      "med_age_home2021" = "Median home value ($)",
-      "internet_hh_pct2021" = "Households with internet access (%)",
-      "rent_burdened_pct2021" = "Rent burdened households (%)",
-      "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
-      "med_gross_rent2021" = "Median gross rent ($)",
-      "afford_avail_units" = "Affordable rent units available",
-      "housing_balance" = "Affordable housing shortage (units)",
-      "rural" = "Rural")
-    
+
     v <- input$variable
     alias <- variable_aliases[v]
     
@@ -282,20 +227,7 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
 
   
   output$leaflet <- renderLeaflet({
-    variable_aliases <- c(
-      "owner_occ_hh_pct2021" = "Homeownership rate (%)",
-      "renter_occ_hh_pct2021" = "Rentership rate (%)",
-      "renter_vacant_pct2021" = "Vacant rental units (%)",
-      "med_age_home2021" = "Median age of home (years)",
-      "med_age_home2021" = "Median home value ($)",
-      "internet_hh_pct2021" = "Households with internet access (%)",
-      "rent_burdened_pct2021" = "Rent burdened households (%)",
-      "mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
-      "med_gross_rent2021" = "Median gross rent ($)",
-      "afford_avail_units" = "Affordable rent units available",
-      "housing_balance" = "Affordable housing shortage (units)"
-    )
-    
+
     v <- input$variable
     alias <- variable_aliases[v]
     
@@ -303,22 +235,22 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
 
     # legend labels
     labels_map <- c(
-      as.character(quantile(var_map, probs = c(0.2))),
-      as.character(quantile(var_map, probs = c(0.4))),
-      as.character(quantile(var_map, probs = c(0.6))),
-      as.character(quantile(var_map, probs = c(0.8))),
-      as.character(quantile(var_map, probs = c(1))))
+      as.character(round(quantile(var_map, probs = c(0.2)),1)),
+      as.character(round(quantile(var_map, probs = c(0.4)),1)),
+      as.character(round(quantile(var_map, probs = c(0.6)),1)),
+      as.character(round(quantile(var_map, probs = c(0.8)),1)),
+      as.character(round(quantile(var_map, probs = c(1)),1)))
     
     #### Leaflet map ####
-    leaflet(options = leafletOptions(minZoom = 7.5)) %>%
+    leaflet(options = leafletOptions(minZoom = 7)) %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
       setView( lng = -77.83069
                , lat = 40.94503
-               , zoom = 7 ) %>%
-      setMaxBounds(lng1 = -81.7787
-                    , lat1 = 38.77897
-                    , lng2 = -73.46516
-                    , lat2 = 43.45229) %>%
+               , zoom = 8 ) %>%
+      setMaxBounds(lng1 = -82
+                    , lat1 = 38.5
+                    , lng2 = -73
+                    , lat2 = 43.3) %>%
       addPolygons(data = dat.sf(), fillColor = ~mapPalette()(dat.sf()$variable),
                   color = "white",
                   weight = 1,
@@ -332,7 +264,7 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
                     fillOpacity = 0.5,
                     bringToFront = TRUE),
                   label = labs_dat()) %>%
-      addControl(title_dat, position = "topright") %>%
+      addControl(title_dat, position = "bottomright") %>%
       addLegend(pal = mapPalette(), 
                 title = paste(as.character(alias), "<br>(Quintile breaks)", sep = ""), 
                 opacity = 1, 
@@ -358,8 +290,8 @@ ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
       addLayersControl(position = "bottomright",
         overlayGroups = c("rural counties", "county names"), 
         options = layersControlOptions(collapsed = F))%>%
-      groupOptions("county names", zoomLevels = 8.5:100) %>%
-      groupOptions("rural counties", zoomLevels = 8.5:100)
+      groupOptions("county names", zoomLevels = 8:100) %>%
+      groupOptions("rural counties", zoomLevels = 10:100)
   })
 
   
