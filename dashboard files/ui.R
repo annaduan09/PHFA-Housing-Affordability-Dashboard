@@ -13,7 +13,8 @@ library(plotly)
 library(bslib)
 library(shinybrowser)
 
-sidebarPanel2 <- function (..., out = NULL, width = 4) 
+
+sidebarPanel2 <- function (..., out = NULL, width = 4) #for putting logo outside of sidebarpanel
 {
   div(class = paste0("col-sm-", width), 
       tags$form(class = "well", ...),
@@ -25,7 +26,7 @@ sidebarPanel2 <- function (..., out = NULL, width = 4)
 ui <- (navbarPage(
   theme = shinytheme("flatly"), collapsible = TRUE,
   title = strong("PHFA Housing Explorer"),
-  windowTitle = "PA Housing Indicators",
+  windowTitle = "PA Affordable Housing",
         tabPanel("PA Mapper", sidebarLayout(
           sidebarPanel2(width = 3, h3("Affordable Housing Explorer"), 
                        selectInput("variable",                        
