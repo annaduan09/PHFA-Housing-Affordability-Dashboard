@@ -11,7 +11,7 @@ library(magrittr)
 library(shinythemes)
 library(plotly)
 library(bslib)
-library(shinybrowser)
+library(shinyWidgets)
 
 
 sidebarPanel2 <- function (..., out = NULL, width = 4) #for putting logo outside of sidebarpanel
@@ -69,7 +69,21 @@ ui <- navbarPage(
                                                                                                                         "Affordable rent units available" = "afford_avail_units",
                                                                                                                         "Affordable housing shortage (units)" = "housing_balance"),
                                                                                                  "Other topics" = list("Households with internet access (%)" = "internet_hh_pct2021")), selected = "owner_occ_hh_pct2021"),
-                       sliderInput("slider_bars", label = "Counties to show", min = 5, max = 67, value = 18, step = 1, round = TRUE, ticks = TRUE, post = "counties"),
+                       selectInput("barp_counties", "Select counties to show", 
+                                   choices = list(
+                         "Adams", "Allegheny", "Armstrong", "Beaver", "Bedford", "Berks", 
+                         "Blair", "Bradford", "Bucks", "Butler", "Cambria", "Cameron", 
+                         "Carbon", "Centre", "Chester", "Clarion", "Clearfield", "Clinton", 
+                         "Columbia", "Crawford", "Cumberland", "Dauphin", "Delaware", 
+                         "Elk", "Erie", "Fayette", "Forest", "Franklin", "Fulton", 
+                         "Greene", "Huntingdon", "Indiana", "Jefferson", "Juniata", 
+                         "Lackawanna", "Lancaster", "Lawrence", "Lebanon", "Lehigh", 
+                         "Luzerne", "Lycoming", "McKean", "Mercer", "Mifflin", "Monroe", 
+                         "Montgomery", "Montour", "Northampton", "Northumberland", 
+                         "Perry", "Philadelphia", "Pike", "Potter", "Schuylkill", 
+                         "Snyder", "Somerset", "Sullivan", "Susquehanna", "Tioga", 
+                         "Union", "Venango", "Warren", "Washington", "Wayne", "Westmoreland", 
+                         "Wyoming", "York"), selected = list("Adams", "Allegheny", "Armstrong", "Beaver", "Bedford", "Berks"), multiple = TRUE),
                        br(), 
                        shiny::p("Select an indicator to compare across counties and rural status. Use the slider bar to show more or fewer counties."),
                        out = 

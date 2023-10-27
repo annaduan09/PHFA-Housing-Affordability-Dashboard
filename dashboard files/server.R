@@ -18,9 +18,11 @@ library(DT)
 
 
 #### Data processing ####  
+# original data
 dat <- st_read("PHFA_dash_data_October3.geojson") %>%
   dplyr::mutate(housing_balance = ifelse(housing_balance < 0, abs(housing_balance), 0))
 
+# spatial panel
 panel.sf <- dat %>%
   dplyr::select(county) %>%
   st_centroid() %>%
@@ -32,14 +34,16 @@ panel.sf <- dat %>%
   left_join(dat, by = "county") %>%
   st_as_sf()
 
+# non-spatial panel
 panel <- st_drop_geometry(panel.sf)
 
-
+# rural counties
 rural <- panel.sf %>% 
   dplyr::filter(rural != 1) %>%
   st_union() %>%
   st_as_sf()
 
+# state averages for variables
 state_avg <- st_read("state_avg.csv")
 
 # variable aliases for display
@@ -71,6 +75,7 @@ variable_prefix <- c(
 "afford_avail_units" = "",
 "housing_balance" = ""
 )
+
 # suffixes for legend labels
 variable_suffix <- c(
   "owner_occ_hh_pct2021" = "%",
@@ -92,25 +97,19 @@ server <- function(input, output, session) {
   
   pa_avg = reactive({
     state_avg %>%
-      dplyr::select(variable = input$variable)
-  })
+      dplyr::select(variable = input$variable)})
   
-
   dat.sf = reactive({
     panel.sf %>%
       dplyr::select(variable = input$variable, county, geometry, lat, lon, rural) %>%
-      st_as_sf()
-  })
+      st_as_sf()})
   
   dat = reactive({
     panel %>%
       dplyr::select(county, variable = input$variable, 
                     variable_bar = input$variable_bar, 
                     variable_scatter_x = input$variable_scatter_x, variable_scatter_y = input$variable_scatter_y, 
-                    variable_tab = input$variable_tab, rural)
-  })
-  
-  
+                    variable_tab = input$variable_tab, rural)})
   
   #### reactive palette ####
   mapPalette <- reactive({
@@ -118,26 +117,27 @@ server <- function(input, output, session) {
       palette = "YlGnBu",
       domain = NULL,
       reverse = FALSE,
-      probs = c(0, 0.2, 0.4, 0.6, 0.8, 1)
-    )
-  })
-  
+      probs = c(0, 0.2, 0.4, 0.6, 0.8, 1))})
   
   #### bar plot ####
   output$plot <- renderPlotly({
+    counties <- input$barp_counties %>%
+      as.list()
+    
     v <- input$variable_bar
     df <- dat() %>% as.data.frame()
+    
     df <- df %>%
       dplyr::mutate(rural_score = ifelse(rural == 1, 100000, 0),
              order_id = rural_score + variable_bar) %>%
-      head(input$slider_bars)
+       dplyr::filter(county %in% counties)
     
     v <- input$variable_bar
     alias <- variable_aliases[v]
   
 barp <- ggplot(data = df, aes(x = reorder(county, order_id), y = variable_bar, fill = variable_bar)) +
-      geom_bar(color = "transparent", stat = "identity") +
-      scale_fill_distiller(palette = "YlGnBu", direction = 1, name = "") +
+      geom_bar(color = "transparent", stat = "identity", aes(fill = as.factor(rural))) +
+  scale_fill_manual(values = c("#41B6C4", "#A1DAB4")) +
       labs(title = paste(alias, "by PA county", sep = " "), caption = "Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/. ", fill = alias, color = "Rural County", y = alias, x = "Urban Counties                                          Rural Counties") +
       theme_minimal() +
       theme(legend.position = "none") +
@@ -172,11 +172,9 @@ ggplotly(barp) %>%
     return(desc)
   })
   
-  
   #### scatter plot ####
   output$scatter <- renderPlotly({
 df <- dat() %>% as.data.frame()
-
 
 x <- input$variable_scatter_x
 y <- input$variable_scatter_y
@@ -185,8 +183,8 @@ alias_y <- variable_aliases[y]
 
     scatterp <- ggplot(df, aes(x = variable_scatter_x, y = variable_scatter_y)) +
       geom_smooth(se = FALSE, colour = "gray", size = 0.5) +
-      geom_point(stat = "identity", aes(color = as.factor(rural)), size = 2, alpha = 0.5) +
-      scale_color_manual(values = c("cyan2", "navy"), name = "Rural") +
+      geom_point(stat = "identity", aes(color = as.factor(rural)), size = 2, alpha = 0.8) +
+      scale_color_manual(values = c("#41B6C4", "#A1DAB4"), name = "Rural") +
       labs(title = paste(alias_x, "as a function of", alias_y, sep = " "), 
            x = alias_x, y = alias_y) + theme_minimal() 
     
