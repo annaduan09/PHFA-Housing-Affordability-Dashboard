@@ -44,18 +44,17 @@ state_avg <- st_read("state_avg.csv")
 
 # variable aliases for display
 variable_aliases <- c(
-"owner_occ_hh_pct2021" = "Homeownership rate (%)",
-"renter_occ_hh_pct2021" = "Rentership rate (%)",
-"renter_vacant_pct2021" = "Vacant rental units (%)",
-"med_age_home2021" = "Median age of home (years)",
-"med_home_value2021" = "Median home value ($)",
-"internet_hh_pct2021" = "Households with internet access (%)",
-"rent_burdened_pct2021" = "Rent burdened households (%)",
-"mortgage_burdened_pct2021" = "Mortgage burdened households (%)",
-"med_gross_rent2021" = "Median gross rent ($)",
+"owner_occ_hh_pct2021" = "Homeownership rate",
+"renter_occ_hh_pct2021" = "Rentership rate",
+"renter_vacant_pct2021" = "Vacant rental units",
+"med_age_home2021" = "Median age of home",
+"med_home_value2021" = "Median home value",
+"internet_hh_pct2021" = "Households with internet access",
+"rent_burdened_pct2021" = "Rent burdened households",
+"mortgage_burdened_pct2021" = "Mortgage burdened households",
+"med_gross_rent2021" = "Median gross rent",
 "afford_avail_units" = "Affordable rent units available",
-"housing_balance" = "Affordable housing shortage (units)",
-"rural" = "Rural"
+"housing_balance" = "Affordable housing shortage"
 )
 
 # prefixes for legend labels 
