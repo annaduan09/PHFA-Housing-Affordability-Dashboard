@@ -159,14 +159,13 @@ ggplotly(barp) %>%
     "renter_occ_hh_pct2021" = "Rentership rate (%) is the percentage of households that rent their homes. It provides insight into the proportion of the population that does not own property.",
     "renter_vacant_pct2021" = "Vacant rental units (%) represents the percentage of rental units that are currently unoccupied. A higher percentage can suggest that there's a surplus of rental housing or potentially decreased demand.",
     "med_age_home2021" = "Median age of home (years) indicates the midpoint age of homes in a specific area. Older median ages can suggest historical or older neighborhoods, while lower values might indicate newer developments.",
-    "med_age_home2021" = "Median home value ($) is the midpoint value of homes in the area. This can provide an insight into the overall affordability and property values of a region.",
+    "med_home_value2021" = "Median home value ($) is the midpoint value of homes in the area. This can provide an insight into the overall affordability and property values of a region.",
     "internet_hh_pct2021" = "Households with internet access (%) is the percentage of households that have access to the internet. This can provide insights into the area's technological infrastructure and development.",
     "rent_burdened_pct2021" = "Rent burdened households (%) represents low-income households that spend 30% or more of their income on rent. Higher percentages can suggest issues with affordability for low-income renters.",
     "mortgage_burdened_pct2021" = "Mortgage burdened households (%) indicates the low-income households spending 30% or more of their income on mortgage payments. Higher percentages may show potential financial strain for low-income homeowners.",
     "med_gross_rent2021" = "Median gross rent ($) is the midpoint monthly rent amount households pay, inclusive of utilities. It helps gauge the typical rental costs in an area.",
     "afford_avail_units" = "Affordable rent units available measures the total number of rental units in the area that are deemed affordable based on set income standards or thresholds.",
-    "housing_balance" = "Affordable housing shortage (units) refers to the difference between the demand for affordable housing and the supply available. A positive number indicates a shortage of affordable housing units."
-  )
+    "housing_balance" = "Affordable housing shortage (units) refers to the difference between the demand for affordable housing and the supply available. A positive number indicates a shortage of affordable housing units.")
     v <- input$variable
     desc <- description[v]
     return(desc)
@@ -174,28 +173,33 @@ ggplotly(barp) %>%
   
   #### scatter plot ####
   output$scatter <- renderPlotly({
-df <- dat() %>% as.data.frame()
+    df <- dat() %>% as.data.frame() %>%
+      mutate(rural = as.factor(rural))
 
 x <- input$variable_scatter_x
 y <- input$variable_scatter_y
 alias_x <- variable_aliases[x]
 alias_y <- variable_aliases[y]
 
-    scatterp <- ggplot(df, aes(x = variable_scatter_x, y = variable_scatter_y)) +
-      geom_smooth(se = FALSE, colour = "gray", size = 0.5) +
-      geom_point(stat = "identity", aes(color = as.factor(rural)), size = 2, alpha = 0.8) +
-      scale_color_manual(values = c("#41B6C4", "#A1DAB4"), name = "Rural") +
-      labs(title = paste(alias_x, "as a function of", alias_y, sep = " "), 
-           x = alias_x, y = alias_y) + theme_minimal() 
-    
-ggplotly(scatterp + theme(legend.position = c(0.6, 0.6))) %>%
+# custom hover text
+df$hover_text <- paste("County: ", df$county, "<br>")
+
+scatterp <- ggplot(df, aes(x = variable_scatter_x, y = variable_scatter_y)) +
+  geom_smooth(se = FALSE, colour = "gray", size = 0.5) +
+  geom_point(stat = "identity", 
+             aes(color = rural, text = hover_text), 
+             size = 2, alpha = 0.8) +
+  scale_color_manual(values = c("#41B6C4", "#A1DAB4"), name = "Rural") +
+  labs(title = paste(alias_x, "as a function of", alias_y, sep = " "),
+       x = alias_x, y = alias_y) + theme_minimal()
+
+ggplotly(scatterp + theme(legend.position = c(0.6, 0.6)),
+         hoverinfo = "text") %>%
   plotly::layout(margin = list(l = 50, r = 50, b = 100, t = 50),
                  annotations = list(x = 0.5, y = -0.2, text = "Source: Duan, Anna. Pennsylvania Affordable Housing Dashboard, Housing Initiative at Penn, Oct. 2023, annaduan09.shinyapps.io/PHFAdashOct3/. ",
-                                    xref='paper', yref='paper', showarrow = F, 
+                                    xref='paper', yref='paper', showarrow = F,
                                     xanchor='center', yanchor='bottom', xshift=0, yshift=0,
-                                    font = list(size = 12, color = "gray")))
-    
-  })
+                                    font = list(size = 12, color = "gray")))})
 
   #### Data table ####
   output$table <- DT::renderDataTable({
